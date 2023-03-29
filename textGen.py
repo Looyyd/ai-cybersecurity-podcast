@@ -6,6 +6,16 @@ from datetime import datetime, timedelta, timezone
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+def gpt35_complete(prompt):
+    conversation = [
+        {"role": "system", "content": "You are a helpful assistant that creates podcast scripts."},
+        {"role": "user", "content": prompt},
+    ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=conversation,
+    )
+    return response.choices[0].message.content
 
 rss_feed_urls = ['https://feeds.feedburner.com/TheHackersNews',
                  'https://www.cisa.gov/news.xml',
@@ -76,20 +86,21 @@ prompt="You will be given headlines of cybersecurity news articles from differen
         + headline_string  \
         + "\n3 biggest stories:"
 
-response = openai.Completion.create(
-  model="text-davinci-003",
-    prompt=prompt,
-  temperature=0,
-  max_tokens=1000,
-  top_p=1.0,
-  frequency_penalty=0.5,
-  presence_penalty=0.0
-)
+#response = openai.Completion.create(
+  #model="text-davinci-003",
+    #prompt=prompt,
+  #temperature=0,
+  #max_tokens=1000,
+  #top_p=1.0,
+  #frequency_penalty=0.5,
+  #presence_penalty=0.0
+#)
+response = gpt35_complete(prompt)
 
 
 print("GPT response:")
 #print(response)
-response_text = response.choices[0].text
+response_text = response
 print(response_text)
 
 selected_headlines = []
