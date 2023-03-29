@@ -55,7 +55,7 @@ for  rss_feed_url in rss_feed_urls:
         entry_date = parse_date(entry.published)
         if entry_date > one_week_ago:
             #print(entry.published, entry.title)
-            headlines.append("Article:" + entry.title + " ,Article link: " + entry.link + "\n")
+            headlines.append("Article:" + entry.title + ", Article link: " + entry.link + "\n")
             #print(entry)
 
 
@@ -67,34 +67,16 @@ print(headline_string)
 prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
         Determine what were the 3 most interesting news stories out of these headlines.\
         Under each story, add links to the relevant articles.\
-        Example output:\
-            1. Cyberattack targets something.\
-                https://thehackernews.com/2023/03/cyberattack-targets-something\
-                https://www.darkreading.com/attacks-breaches/cyberattack-at-something\n\n"\
-        + "Headlines:\n"  \
-        + headline_string  \
-        + "\n3 biggest stories:"
-prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
-        Determine what were the 3 most interesting news stories out of these headlines.\
-        Under each story, add links to the relevant articles.\
-                Put the output into json. Example output:\
-    { \"title\": \"Article1\", \"link\": \"link1\" } \
-    { \"title\": \"Article2\", \"link\": \"link2\" } \
-    { \"title\": \"Article3\", \"link\": \"link3\" } \
-}\n\n"\
+        Put the output into json. You MUST send 1 line per json object. Example output:\
+        { \"title\": \"Article1\", \"link\": \"link1\" } \
+        { \"title\": \"Article2\", \"link\": \"link2\" } \
+        { \"title\": \"Article3\", \"link\": \"link3\" } \
+        }\n\n"\
         + "Headlines:\n"  \
         + headline_string  \
         + "\n3 biggest stories:"
 
-#response = openai.Completion.create(
-  #model="text-davinci-003",
-    #prompt=prompt,
-  #temperature=0,
-  #max_tokens=1000,
-  #top_p=1.0,
-  #frequency_penalty=0.5,
-  #presence_penalty=0.0
-#)
+
 response = gpt35_complete(prompt)
 
 

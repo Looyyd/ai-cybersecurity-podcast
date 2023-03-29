@@ -1,0 +1,78 @@
+John: Hello and welcome to The Cyber AI Daily, your go-to podcast for all the latest cybersecurity news. I'm your host, John, and joining me today is our co-host, Jane.
+
+Jane: Hi John, happy to be here!
+
+John: So Jane, we have some interesting headlines to discuss today. First up, Microsoft has introduced their newest AI-powered security copilot tool, GPT-4, intended to empower defenders against cyberattacks.
+
+Jane: Yes, the GPT-4 is expected to be a game changer in the industry, particularly for its ability to learn from cybersecurity analysts' responses and recognize patterns in potential threats.
+
+John: Our second headline is about President Biden signing an executive order that restricts the use of commercial spyware, emphasizing the importance of protecting individual privacy.
+
+Jane: This has been a long-awaited move for many in the industry, and we hope this action will pave the way for further advancements in cybersecurity and privacy protection.
+
+John: Finally, North Korea's Kimsuky has evolved into a full-fledged, prolific APT.
+
+Jane: Yes, Kimsuky has been known for its spear-phishing campaigns, and now it is equipped with new tools to target victims and evade detection.
+
+John: It's clear that cybersecurity threats are evolving constantly and becoming more sophisticated.
+
+Jane: That's why it's important to stay informed, and The Cyber AI Daily is here to provide you with the latest news and insights you need to know.
+
+John: That's right, we aim to make your cybersecurity journey informative and enjoyable. So stay tuned for more episodes of The Cyber AI Daily.
+
+#jingle:
+John: Hello and welcome to The Cyber AI Daily. Today we have exciting news about the latest AI push from Microsoft. The company has unveiled Security Copilot, a new security analysis tool powered by OpenAI's GPT-4 generative AI and Microsoft's security-specific model. The tool aims to enable cybersecurity analysts to quickly respond to threats, process signals, and assess risk exposure.
+
+Jane: This new AI-powered tool collates insights and data from various Microsoft products, including Microsoft Sentinel, Defender, and Intune, to help security teams better understand their environment. It determines if they are susceptible to known vulnerabilities and exploits, identifies ongoing attacks and their scale, and provides remediation instructions while summarizing incidents.
+
+John: What's really interesting about Security Copilot is its versatility. For example, users can ask Security Copilot about suspicious user logins over a specific time period or even create a PowerPoint presentation outlining an incident and its attack chain. It can also accept files, URLs, and code snippets for analysis.
+
+Jane: It's worth noting that Microsoft's proprietary security-specific model is informed by more than 65 trillion daily signals. The company assures us that the tool is privacy-compliant and customer data "is not used to train the foundational AI models."
+
+John: Vasu Jakkal, Microsoft's corporate vice president of Security, Compliance, Identity, and Management, said that "today the odds remain stacked against cybersecurity professionals. Too often, they fight an asymmetric battle against prolific, relentless, and sophisticated attackers. To protect their organizations, defenders must respond to threats that are often hidden among noise."
+
+Jane: Security Copilot is the latest AI push from Microsoft, which has been steadily integrating generative AI features into its software offerings. The company has been actively working on this for the past two months, including Bing, Edge browser, GitHub, LinkedIn, and Skype.
+
+John: So there you have it, the latest AI-powered cybersecurity tool from Microsoft, Security Copilot. Join us again tomorrow for more news on the latest developments in cybersecurity.
+
+#transition:
+John: Hello everyone and welcome to The Cyber AI Daily, your daily dose of cybersecurity news. Our headline for today's segment is "President Biden Signs Executive Order Restricting Use of Commercial Spyware". This is a significant move by the US Government to protect its interests and ensure the responsible use of surveillance technology. Here with me to unpack the executive order is our co-host, Jane. Jane, what are your thoughts on this new executive order?
+
+Jane: Thank you, John. I think this is a great step towards safeguarding the government's sensitive data and protecting human rights. The use of commercial spyware by foreign entities for cyber-espionage activities presents a significant security risk to the US Government. This executive order will certainly go a long way in promoting responsible use of surveillance technology by governments and private entities.
+
+John: The order disqualifies the use of commercial spyware by the US Government agencies under certain criteria. Can you highlight some of these criteria, Jane, and what they entail?
+
+Jane: Absolutely, John. The criteria includes, but is not limited to, the purchase of commercial spyware by a foreign government or person to target the US Government. Additionally, any commercial spyware vendor that uses or discloses sensitive data obtained from the cyber surveillance tool without authorization is disqualified. The order also prohibits the sales of commercial spyware to governments that have a record of engaging in systematic acts of political repression and other human rights violations.
+
+John: That's a comprehensive list, Jane. The order also seeks to promote industry reform and deepen international cooperation to counteract the proliferation and misuse of surveillance technology. It's evident that commercial spyware poses a growing counterintelligence and national security risk to government personnel. With this being the case, the US Government must take proactive measures to safeguard its sensitive data.
+
+Jane: The implementation of this executive order will certainly improve the security posture of US Government agencies. However, it's essential to note that the order doesn't constitute an outright ban on the use of commercial spyware. The use of other kinds of spyware devices, such as IMSI catchers, is still allowed by government agencies for legitimate intelligence-gathering operations.
+
+John: That's a great point, Jane. The use of such spyware devices clearly presents new cybersecurity risks to our government. The question is, how do we strike a balance between gathering valuable intelligence and protecting the interests of the US Government? It's a complex issue, but one that undoubtedly requires ongoing attention.
+
+Jane: I couldn't agree more, John. This executive order is a positive move towards achieving that balance. It's a step in the right direction, and we look forward to more developments in this space.
+
+John: That's all for today's segment. We hope you found this informative. Join us again tomorrow for more cybersecurity news on The Cyber AI Daily.
+
+#transition:
+John: Welcome to The Cyber AI Daily, the podcast where we discuss the latest cybersecurity news. Today we'll be talking about Kimsuky, a cybercriminal group that has evolved into a full-fledged, prolific APT. Jane, what can you tell us about this group?
+
+Jane: Well, John, Kimsuky, also known as Thallium, has been active since 2018 and had mainly focused on conducting cyber espionage against research institutions, geo-political think tanks, and pharmaceutical companies. However, according to a report by Mandiant, the group has evolved in several ways.
+
+John: What kind of changes have they undergone?
+
+Jane: For starters, the group is now stealing cryptocurrency to fund both its own activities and the North Korean regime. What's new here is that they are laundering the crypto through legitimate cloud-mining services, so it is difficult to track.
+
+John: That's concerning. What else has changed?
+
+Jane: Mandiant researchers found that Kimsuky is now relying on advanced and persistent social-engineering tactics. They pretend to be subject-matter experts, reporters, or even peers to build relationships with targets over several weeks without using any malware. It's pretty clever, and it's making them successful.
+
+John: That's definitely a problem. Do we know who they are targeting?
+
+Jane: Yes, the group has shifted its targets and malware over the years in response to the North Korean government's demands. They've started targeting everyday users based on the sheer volume and velocity of their attacks, making them harder to track. They're aiming their activity at entities and organizations in government, business services, and manufacturing, as well as think tanks and organizations in education and research related to geopolitical and nuclear policy in the US, South Korea, and Japan.
+
+John: So, what can organizations do to protect themselves against this threat?
+
+Jane: Organizations need to educate their employees on good cyber hygiene and increase their awareness. The spoofed emails used by Kimsuky are highly convincing, making them difficult to spot, even for savvy users. It's important to make personnel aware of this threat actor's tactics, as well as to use technology-based countermeasures like email filtering, endpoint protection, and intrusion detection/prevention.
+
+John: Thank you, Jane, for your insights. As always, our listeners can find more information about this topic in our show notes. That's all for today's episode of The Cyber AI Daily, stay safe out there.

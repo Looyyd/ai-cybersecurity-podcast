@@ -5,15 +5,24 @@ import shutil
 from pydub import AudioSegment
 
 
-dialogue = "John: Welcome to the Cybersecurity Cybernews Podcast. Jane: That's right John. . John: That's right Jane. Jane: Absolutely John!"
+#dialogue = "John: Welcome to the Cybersecurity Cybernews Podcast. Jane: That's right John. John: That's right Jane. Jane: Absolutely John!"
+# read the dialogue from the file archives/finaldraft.txt
+podcast_number = "1"
+with open("archives/" + podcast_number + "/finaldraft.txt", "r") as text_file:
+    dialogue = text_file.read()
 
 def parse_dialogue(dialogue):
     dialogue_list = []
-    lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z]+:)', dialogue)
-    
+    lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z#]+:)', dialogue)
+
     for line in lines:
         person, text = line.split(':', 1)
-        dialogue_list.append({"person": person.strip(), "dialogue": text.strip()})
+        person = person.strip()
+
+        if person.startswith("#"):
+            dialogue_list.append({"person": person[1:], "dialogue": ""})
+        else:
+            dialogue_list.append({"person": person, "dialogue": text.strip()})
     
     return dialogue_list
 
@@ -95,17 +104,28 @@ female_id="VtBQYxE6jqCxqZr2GUQO"
 
 # parse dialogue into list of lines
 parsed_dialogue = parse_dialogue(dialogue)
+print(parsed_dialogue)
+exit()
 
 i=0
 for line in parsed_dialogue:
     i = i+1
-    # request the api for each person
-    response = tts(line["dialogue"], line["person"])
-    print(response.headers["Content-Type"])
-    print(response)
-    assert response.headers["Content-Type"] == "audio/mpeg"
-    with open("audio/{}.mp3".format(i), "wb") as file:
-        file.write(response.content)
+    # if person is sound effect, add sound effect from assets folder
+    if line["person"] == "transition":
+        shutil.copy("assets/transition.mp3", "audio/{}.mp3".format(i))
+        continue
+    elif line["person"] == "jingle":
+        shutil.copy("assets/jingle.mp3", "audio/{}.mp3".format(i))
+        continue
+    #if line is not sound effect, request the api for the audio
+    else:
+        # request the api for each person
+        response = tts(line["dialogue"], line["person"])
+        print(response.headers["Content-Type"])
+        print(response)
+        assert response.headers["Content-Type"] == "audio/mpeg"
+        with open("audio/{}.mp3".format(i), "wb") as file:
+            file.write(response.content)
 
 
 # make the podcast

@@ -1,0 +1,72 @@
+John: Welcome to The Cyber AI Daily, your source for cybersecurity news. I'm John, your host, and joining me today is our co-host Jane.
+
+Jane: Hi everyone, excited to be here.
+
+John: In today's episode, we'll be discussing the latest cybersecurity headlines, including Microsoft's new GPT-4 AI-Powered Security Copilot Tool, President Biden's recent executive order restricting commercial spyware, and the evolution of North Korea's Kimsuky into a full-fledged, prolific APT.
+
+Jane: As always, our goal is to provide you with informative and factual news about the latest cybersecurity trends while keeping the tone light. So, let's jump right in.
+
+#jingle
+
+Segment 1:
+John: Welcome to The Cyber AI Daily! I'm your host, John.
+
+Jane: And I'm your co-host, Jane.
+
+John: Our top story today is about Microsoft and their latest cybersecurity tool.
+
+Jane: That's right, John. Microsoft has introduced a new AI-powered security copilot tool called Security Copilot, which is designed to empower defenders with better threat detection and analysis capabilities.
+
+John: It's powered by OpenAI's GPT-4 generative AI and Microsoft's own security-specific model, enabling cybersecurity analysts to quickly respond to threats, process signals, and assess risk exposure.
+
+Jane: The tool collates insights and data from various products like Microsoft Sentinel, Defender, and Intune to help security teams better understand their environment and identify ongoing attacks. It even provides remediation instructions and summarizes incidents.
+
+John: And the best thing about it is that it's privacy-compliant and customer data is not used to train the AI models.
+
+Jane: Microsoft's corporate vice president of Security, Compliance, Identity, and Management, Vasu Jakkal, emphasized that "the odds remain stacked against cybersecurity professionals."
+
+John: That's why Microsoft is trying to level the playing field by integrating AI features into their software offerings like Security Copilot, Bing, Edge browser, GitHub, LinkedIn, and Skype.
+
+Jane: And let's not forget about Microsoft 365 Copilot, which integrates AI capabilities within its suite of productivity and enterprise apps.
+
+John: It's exciting to see Microsoft making such a big push towards integrating AI into their cybersecurity tools. I can't wait to see what they come up with next.
+
+Jane: Neither can I. Stay tuned for more cybersecurity news and updates on The Cyber AI Daily.
+
+#transition
+
+Segment 2:
+John: Welcome to The Cyber AI Daily, your source for cybersecurity news. Today, we're discussing President Biden's recent executive order that restricts the use of commercial spyware by federal government agencies. Joining me is Jane, a cybersecurity auditor. Jane, what are your thoughts on this order?
+
+Jane: Thanks, John. I think it's a step in the right direction. The use of spyware poses significant risks to national security and privacy. It's important that government agencies use these tools in a manner consistent with the rule of law, human rights, and democratic values.
+
+John: Absolutely. The order lays out various criteria that could disqualify the use of commercial spyware. For example, if a foreign government purchases commercial spyware to target the U.S., or if a commercial spyware vendor uses sensitive data without authorization or operates under the control of a foreign government engaged in espionage activities aimed at the U.S.
+
+Jane: That's right, John. It's important to prevent foreign governments from using spyware against activists and dissidents to limit freedom of expression or perpetrate human rights abuses.
+
+John: Exactly. And while this order doesn't outright ban the use of spyware, it does aim to promote responsible use of surveillance technology and spur industry reform. It also acknowledges that the sale of spyware tools can play an important role in intelligence gathering operations.
+
+Jane: It's worth noting that some U.S. government officials have already been targeted by spyware, which is a growing national security risk. It's important that we take steps to minimize this risk and ensure that these tools are used responsibly.
+
+John: And with that, we wrap up our discussion on President Biden's executive order restricting the use of commercial spyware by federal government agencies. Thanks for tuning in to The Cyber AI Daily, and we'll be back tomorrow with more cybersecurity news.
+
+#transition
+
+Segment 3:
+John: "Welcome to The Cyber AI Daily. Today, we're discussing the latest report out from Mandiant that details how the cybercriminal group Kimsuky, also known as Thallium, has now evolved into a full-fledged and persistent threat." 
+
+Jane: "That's right, John. Researchers at Mandiant have tracked the group's unusually aggressive social engineering attacks aimed at gathering intelligence and stealing cryptocurrency." 
+
+John: "One of the most alarming aspects of this report is that the group is now laundering its stolen cryptocurrency through legitimate cloud-mining services to make it difficult to be tracked." 
+
+Jane: "And APT43, which is the name given to this group by Mandiant, is even branching out beyond cyber espionage to steal cryptocurrency for the North Korean regime and even using it to bolster its own activities." 
+
+John: "Right, and these activities include high-volume cyberattacks aimed at entities and organizations in government, business services, and manufacturing, as well as think tanks and organizations in education and research related to geopolitical and nuclear policy in the US, South Korea, and Japan." 
+
+Jane: "And here's the thing, John, the group doesn't rely solely on malware to carry out these attacks. They create fake personas, and they build relationships with targets over several weeks without using any malware at all." 
+
+John: "That is really impressive, and also concerning. It shows how advanced and persistent social engineering can be used as a successful attack vector. Mandiant researchers even state that in some instances, targeted victims were willingly sending over their proprietary research without deploying malware at all." 
+
+Jane: "So, it's important for organizations to understand the TTPs of APT43 and educate employees on how to spot their sophisticated social engineering tactics." 
+
+John: "Yes, we can't stress enough how essential cyber hygiene and heightened awareness is in today's cybersecurity landscape. Stay educated, stay vigilant, and join us tomorrow for another episode of The Cyber AI Daily."
