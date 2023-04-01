@@ -4,12 +4,20 @@ import re
 import shutil
 from pydub import AudioSegment
 
+# CONSTANTS
+elevenLabsKey = os.getenv("ELEVENLABS_API_KEY")
+eleven_domain = "https://api.elevenlabs.io/"
+# voice id of Male host and female host
+male_id="5AnsleRivsVBr8bi8Zh3"
+female_id="VtBQYxE6jqCxqZr2GUQO"
 
 #dialogue = "John: Welcome to the Cybersecurity Cybernews Podcast. Jane: That's right John. John: That's right Jane. Jane: Absolutely John!"
 # read the dialogue from the file archives/finaldraft.txt
-podcast_number = "1"
-with open("archives/" + podcast_number + "/finaldraft.txt", "r") as text_file:
-    dialogue = text_file.read()
+
+def read_dialogue_from_file(podcast_number):
+    with open("archives/" + podcast_number + "/finaldraft.txt", "r") as text_file:
+        dialogue = text_file.read()
+    return dialogue
 
 def parse_dialogue(dialogue):
     dialogue_list = []
@@ -82,51 +90,45 @@ def audio_files_to_podcast(podcast_number):
     move_audio_files(input_folder, "archive/audio_archive{}".format(podcast_number))
 
 
-elevenLabsKey = os.getenv("ELEVENLABS_API_KEY")
+# function that gets the list of available voices from the api
+def get_voices():
+    # get voices from api, put key into header xi-api-key
+    # TODO: add error handling
+    response = requests.get(eleven_domain + "v1/voices", headers={"xi-api-key": elevenLabsKey})
+    voices = response.json()["voices"]
+    for voice in voices:
+        print(voice["voice_id"], voice["name"])
+    return voices
 
-eleven_domain = "https://api.elevenlabs.io/"
-# get voices from api, put key into header xi-api-key
-response = requests.get(eleven_domain + "v1/voices", headers={"xi-api-key": elevenLabsKey})
-# TODO: add error handling
+# function that takes in an array of dialogue lines and returns the audio files
+def parsed_dialogue_to_audio_files(parsed_dialogue):
+    i=0
+    for line in parsed_dialogue:
+        i = i+1
+        # if person is sound effect, add sound effect from assets folder
+        if line["person"] == "transition":
+            shutil.copy("assets/transition.mp3", "audio/{}.mp3".format(i))
+            continue
+        elif line["person"] == "jingle":
+            shutil.copy("assets/jingle.mp3", "audio/{}.mp3".format(i))
+            continue
+        #if line is not sound effect, request the api for the audio
+        else:
+            # request the api for each person
+            response = tts(line["dialogue"], line["person"])
+            print(response.headers["Content-Type"])
+            print(response)
+            assert response.headers["Content-Type"] == "audio/mpeg"
+            with open("audio/{}.mp3".format(i), "wb") as file:
+                file.write(response.content)
 
-#print(response.json())
+# function that takes the gpt4 dialogue output and makes it into the podcast audio
+def podcast_script_to_audio(script, podcast_number):
+    #parse dialogue into array of json objects
+    parsed_dialogue = parse_dialogue(script)
+    #print(parsed_dialogue)
+    # make the audio files using eleven labs api
+    parsed_dialogue_to_audio_files(parsed_dialogue)
+    # make the podcast by joining audio files together
+    audio_files_to_podcast(podcast_number)
 
-voices = response.json()["voices"]
-#print(voices)
-
-# get voices ids and names
-for voice in voices:
-    print(voice["voice_id"], voice["name"])
-
-# get voice id of Male host and female host
-male_id="5AnsleRivsVBr8bi8Zh3"
-female_id="VtBQYxE6jqCxqZr2GUQO"
-
-# parse dialogue into list of lines
-parsed_dialogue = parse_dialogue(dialogue)
-print(parsed_dialogue)
-exit()
-
-i=0
-for line in parsed_dialogue:
-    i = i+1
-    # if person is sound effect, add sound effect from assets folder
-    if line["person"] == "transition":
-        shutil.copy("assets/transition.mp3", "audio/{}.mp3".format(i))
-        continue
-    elif line["person"] == "jingle":
-        shutil.copy("assets/jingle.mp3", "audio/{}.mp3".format(i))
-        continue
-    #if line is not sound effect, request the api for the audio
-    else:
-        # request the api for each person
-        response = tts(line["dialogue"], line["person"])
-        print(response.headers["Content-Type"])
-        print(response)
-        assert response.headers["Content-Type"] == "audio/mpeg"
-        with open("audio/{}.mp3".format(i), "wb") as file:
-            file.write(response.content)
-
-
-# make the podcast
-audio_files_to_podcast(1)
