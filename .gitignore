@@ -1,7 +1,12 @@
 .env
+libs/__pycache__/
+
+secrets/
+
 audio/
 podcasts/
 archive/
 archives/
-libs/__pyache__/
-secrets/
+
+videos/
+video/

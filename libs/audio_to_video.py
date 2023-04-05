@@ -16,4 +16,4 @@ def audio_to_video(audio_path, image_path, output_path):
     final_clip = image_clip.set_audio(audio_clip)
 
     # Write the final clip to an MP4 video file
-    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac", fps=24)
