@@ -156,7 +156,7 @@ def headlines_to_podcast_script(selected_headlines):
             You MUST keep the name of the person speaking before each dialogue line.\
             You MUST add the name of the person speaking if is not already there. For exemple John:...\n\
             You MUST remove all text that's isn't a dialogue line.\n\
-            You MUST keep the lines that start with an #, because they signal when music should be added. For exemple do NOT delete #jingle or #transition" \
+            You MUST keep the lines that start with an #, because they signal when music should be added. For exemple do NOT delete #jingle: or #transition:" \
     + podcast_context \
     + bad_podcast
 
@@ -176,6 +176,44 @@ def headlines_to_podcast_script(selected_headlines):
     #with open("archives/" + str(podcast_number) + "/finaldraft.txt", "w") as text_file:
         #text_file.write(good_podcast)
     return good_podcast
+
+
+# function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
+def headlines_to_podcast_script_gpt4(selected_headlines):
+    # create prompt with all the articles content
+    articles_string = ""
+    for headline in selected_headlines:
+        article_text = extract_text_from_url(headline["link"])
+        articles_string += "Headline: " + headline["title"] + "\n"
+        articles_string += article_text + "\n"
+    
+    # podcast prompt
+    task_prompt = "You will be given a list of headlines and the content of the articles they are about.\
+                    You must write a podcast script that includes all the articles.\
+                        You must include an introduction and a conclusion.\
+                            You must include a transition between each article.\n\n"
+    # prompt for music
+    music_prompt = "You MUST mark transitions between articles with #transition:\n\
+                    You MUST mark the end of the introduction with #jingle.\
+                    You MUST but these markers on new lines. With only the marker on the line.\
+                    For exemple in between the introduction and the first headline:\n \
+                    John: That's right, Jane. So, let's dive right into our first headline.\n\
+                    #jingle\n \
+                    Jane: Today, we're looking into an article about ...\n\n"
+    # format prompt
+    format_prompt = "You MUST write the script for a single episode, the episode must last between 5 and 10 minutes. \
+                    This means between 600 and 800 words more or less.\n"
+
+    # create full prompt
+    full_prompt = task_prompt + podcast_context + music_prompt + format_prompt + articles_string
+
+    # generate podcast script
+    podcast_script = gpt4_complete(full_prompt)
+
+    return podcast_script
+
+
+
 
 # for debugging
 

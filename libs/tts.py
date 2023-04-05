@@ -24,12 +24,22 @@ def parse_dialogue(dialogue):
     lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z#]+:)', dialogue)
 
     for line in lines:
-        person, text = line.split(':', 1)
-        person = person.strip()
-
-        if person.startswith("#"):
-            dialogue_list.append({"person": person[1:], "dialogue": ""})
+        #if first letter is #, it's a jingle or transition
+        if line.startswith("#"):
+            # take the first word and append as a person
+            sound_effect = line.split(' ', 1)[0]
+            dialogue_list.append({"person": sound_effect, "dialogue": ""})
+            continue
         else:
+            # try to split, if it fails it's because there's no person in front of dialogue, let's make john speak then
+            try:
+                person, text = line.split(':', 1)
+                person = person.strip()
+            except ValueError:
+                person = "John"
+                text = line
+            except Exception as e:
+                raise e
             dialogue_list.append({"person": person, "dialogue": text.strip()})
     
     return dialogue_list

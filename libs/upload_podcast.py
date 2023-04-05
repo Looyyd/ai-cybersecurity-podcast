@@ -5,10 +5,10 @@ import google.auth
 
 def get_authenticated_service():
     # Replace with your own OAuth 2.0 client ID and secret
-    credentials = Credentials.from_authorized_user_file('path/to/your/client_secret.json', scopes=['https://www.googleapis.com/auth/youtube.upload'])
+    credentials = Credentials.from_authorized_user_file('secrets/client_secret.json', scopes=['https://www.googleapis.com/auth/youtube.upload'])
     return build('youtube', 'v3', credentials=credentials)
 
-def upload_video(youtube, file_path, title, description):
+def upload_video_youtube(youtube, file_path, title, description):
     body = {
         'snippet': {
             'title': title,
@@ -30,6 +30,8 @@ def upload_video(youtube, file_path, title, description):
 
     print(f'Video was uploaded with video ID "{response["id"]}" and title "{response["snippet"]["title"]}".')
 
+
+
 if __name__ == '__main__':
     youtube = get_authenticated_service()
-    upload_video(youtube, 'path/to/your/video.mp4', 'Podcast Episode Title', 'Podcast Episode Description')
+    upload_video_youtube(youtube, 'path/to/your/video.mp4', 'Podcast Episode Title', 'Podcast Episode Description')
