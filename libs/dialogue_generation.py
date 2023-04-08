@@ -7,20 +7,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 DEBUG = True
 
-# Example podcast script
-exemple_podcast_script = """
-Jane: Welcome to the first episode of The Cybersecurity AI Daily, where we bring you the latest in cybersecurity news. I'm your host, John, joined by my lovely co-host, Jane. We aim to keep you informed and safe with a light tone that won't overwhelm the complexities of the cybersecurity world. So let's kick off today, shall we?
-John: Alright, so our first headline for today revolves around Iran-Based Hackers Caught Carrying Out Destructive Attacks Under Ransomware Guise. Microsoft Threat Intelligence team discovered the Iranian nation-state group, MuddyWater, executing destructive attacks on hybrid environments under a ransomware operation. The group has been active since 2017 and has targeted Middle Eastern nations.
-Jane: It's interesting to note that MuddyWater is thought to have collaborated with an emerging activity cluster, DEV-1084. DEV-1084 has been credited with conducting the destructive actions after MuddyWater successfully gained initial access. This suggests that the group could be a conglomerate rather than a single cohesive group, as Cisco Talos noted earlier this year.
-#transition
-John: Moving on to our next headline, we have Apple Releases Updates to Address Zero-Day Flaws in iOS, iPadOS, macOS, and Safari. Apple has recently released security updates addressing a pair of zero-day flaws that are being actively exploited. The vulnerabilities, CVE-2023-28205 and CVE-2023-28206, discovered by Google's Threat Analysis Group, and Amnesty International's Security Lab, relate to WebKit and IOSurfaceAccelerator.
-Jane: These vulnerabilities could lead to arbitrary code execution and enable an app to execute arbitrary code with kernel privileges. Apple users are advised to update their devices to ensure they're protected since the company is actively aware of the exploitation.
-#transition
-John: Finally, we take a look at a concerning finding about former employees and password usage. According to a survey by PasswordManager.com, 47% of former employees admitted to using their previous company's passwords after leaving. Even more troubling, 58% reported successful usage after they left the company. This highlights a major issue where organizations are not properly offboarding employees after their departure.
-Jane: It's essential for companies to have standard operating procedures in place to create a consistent schedule of updating passwords based on their criticality. As shown in the survey, employees accessing accounts after leaving isn't just a minor issue; around 10% admitted to trying to disrupt company activities using their access, which can lead to serious consequences.
-John: And with that, we've reached the end of today's episode of The Cybersecurity AI Daily. We hope you found the information valuable and that it helps you stay informed and secure in this ever-changing world.\n
-"""
-
 def create_directory_if_not_exists(directory_path):
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
@@ -59,28 +45,9 @@ def log(text):
     if(DEBUG):
         print(text)
 
-podcast_number = 1
-podcast_name = "The name of the podcast is The Cybersecurity AI Daily"
-podcast_number_prompt = "This is episode {} of the podcast.".format(podcast_number)
-podcast_characters =" The characters in the podcast are:\
-    1. The host\n\
-        The host of the podcast is John. Here are John's characteristics, his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
-    John is a CISO at a large company. He has good foundational cybersecurity and computerscience knowledge, and great a understanding of businesses\n\
-    2. The co-host\n\
-        The co-host of the podcast is Jane. Here are Jane's characteristics,his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
-    Jane is security auditor at a smaller cybersecurity consulting firm. She has exceptionnal cybersecurity technical knowledge, but more limited business understanding.\n"
-#TODO: add podcast dynamic between characters
-podcast_goal= "The goal of the podcast is to provide cybersecurity news to the listeners. The podcast is to be informative and factual but with a light tone."
-
-podcast_context = podcast_name \
-    + podcast_goal \
-    + podcast_number_prompt \
-    + podcast_characters \
-    + "Here is an example of a podcast script:\n" \
-    + exemple_podcast_script
 
 # function that takes headlines and creates a podcast introduction
-def headlines_to_podcast_introduction(headlines):
+def headlines_to_podcast_introduction(headlines, podcast_context):
     prompt="You will be given a list of headlines. Write a podcast introduction for the podcast.\
             Note that since it's an introduction you must introduce the podcast.\
                 Include the name of the speaker before each dialogue line. For exemple John:..." \
@@ -92,7 +59,7 @@ def headlines_to_podcast_introduction(headlines):
     return response
 
 # function that takes a article text and returns a podcast segments for it
-def text_to_podcast_segment(article_headline, article_text):
+def text_to_podcast_segment(article_headline, article_text, podcast_context):
     prompt="You will be given the content of an article and a headline for it.\
             Write a podcast segment using the article.\
             Note that since it's a segment you must not introduce the podcast.Jump straight to the subject.\n \
@@ -125,7 +92,7 @@ def json_headlines_to_prompt(headlines):
 
 
 # function that takes interesting headlines in json format and returns a podcast script
-def headlines_to_podcast_script(selected_headlines):
+def headlines_to_podcast_script(selected_headlines, podcast_number):
     # create string with all the headlines titles
     titles_string = json_headlines_to_prompt(selected_headlines)
     # create podcast introduction
@@ -194,8 +161,44 @@ def headlines_to_podcast_script(selected_headlines):
     return good_podcast
 
 
+# create podcast context string from podcast number
+def create_podcast_context(podcast_number):
+    podcast_name = "The name of the podcast is The Cybersecurity AI Daily"
+    podcast_number_prompt = "This is episode {} of the podcast.".format(podcast_number)
+    podcast_characters =" The characters in the podcast are:\
+        1. The host\n\
+            The host of the podcast is John. Here are John's characteristics, his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
+        John is a CISO at a large company. He has good foundational cybersecurity and computerscience knowledge, and great a understanding of businesses\n\
+        2. The co-host\n\
+            The co-host of the podcast is Jane. Here are Jane's characteristics,his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
+        Jane is security auditor at a smaller cybersecurity consulting firm. She has exceptionnal cybersecurity technical knowledge, but more limited business understanding.\n"
+    #TODO: add podcast dynamic between characters
+    podcast_goal= "The goal of the podcast is to provide cybersecurity news to the listeners. The podcast is to be informative and factual but with a light tone."
+    
+    # Example podcast script
+    exemple_podcast_script = """
+    Jane: Welcome to the first episode of The Cybersecurity AI Daily, where we bring you the latest in cybersecurity news. I'm your host, John, joined by my lovely co-host, Jane. We aim to keep you informed and safe with a light tone that won't overwhelm the complexities of the cybersecurity world. So let's kick off today, shall we?
+    John: Alright, so our first headline for today revolves around Iran-Based Hackers Caught Carrying Out Destructive Attacks Under Ransomware Guise. Microsoft Threat Intelligence team discovered the Iranian nation-state group, MuddyWater, executing destructive attacks on hybrid environments under a ransomware operation. The group has been active since 2017 and has targeted Middle Eastern nations.
+    Jane: It's interesting to note that MuddyWater is thought to have collaborated with an emerging activity cluster, DEV-1084. DEV-1084 has been credited with conducting the destructive actions after MuddyWater successfully gained initial access. This suggests that the group could be a conglomerate rather than a single cohesive group, as Cisco Talos noted earlier this year.
+    #transition
+    John: Moving on to our next headline, we have Apple Releases Updates to Address Zero-Day Flaws in iOS, iPadOS, macOS, and Safari. Apple has recently released security updates addressing a pair of zero-day flaws that are being actively exploited. The vulnerabilities, CVE-2023-28205 and CVE-2023-28206, discovered by Google's Threat Analysis Group, and Amnesty International's Security Lab, relate to WebKit and IOSurfaceAccelerator.
+    Jane: These vulnerabilities could lead to arbitrary code execution and enable an app to execute arbitrary code with kernel privileges. Apple users are advised to update their devices to ensure they're protected since the company is actively aware of the exploitation.
+    #transition
+    John: Finally, we take a look at a concerning finding about former employees and password usage. According to a survey by PasswordManager.com, 47% of former employees admitted to using their previous company's passwords after leaving. Even more troubling, 58% reported successful usage after they left the company. This highlights a major issue where organizations are not properly offboarding employees after their departure.
+    Jane: It's essential for companies to have standard operating procedures in place to create a consistent schedule of updating passwords based on their criticality. As shown in the survey, employees accessing accounts after leaving isn't just a minor issue; around 10% admitted to trying to disrupt company activities using their access, which can lead to serious consequences.
+    John: And with that, we've reached the end of today's episode of The Cybersecurity AI Daily. We hope you found the information valuable and that it helps you stay informed and secure in this ever-changing world.\n
+    """
+
+    podcast_context = podcast_name \
+        + podcast_goal \
+        + podcast_number_prompt \
+        + podcast_characters \
+        + "Here is an example of a podcast script:\n" \
+        + exemple_podcast_script
+    return podcast_context
+
 # function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
-def headlines_to_podcast_script_gpt4(selected_headlines):
+def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     # create prompt with all the articles content
     articles_string = ""
     for headline in selected_headlines:
@@ -220,6 +223,8 @@ def headlines_to_podcast_script_gpt4(selected_headlines):
     format_prompt = "You MUST write the script for a single episode, the episode must last between 5 and 10 minutes. \
                     This means between 600 and 800 words more or less.\n"
 
+    # create context using podcast number
+    podcast_context = create_podcast_context(podcast_number)
     # create full prompt
     full_prompt = task_prompt + podcast_context + music_prompt + format_prompt + articles_string
 

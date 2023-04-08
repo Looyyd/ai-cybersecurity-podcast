@@ -11,15 +11,17 @@ from libs.upload_podcast import *
 #upload_video_youtube(youtube, 'videos/1.mp4', 'Podcast Episode Title', 'Podcast Episode Description')
 #exit()
 
+podcast_number = 1
+
 selected_headlines = select_headlines()
-podcast_script = headlines_to_podcast_script_gpt4(selected_headlines)
+podcast_script = headlines_to_podcast_script_gpt4(selected_headlines, podcast_number)
 
 print(podcast_script)
 
 # debug with script only
 parsed_dialogue = parse_dialogue(podcast_script)
 print(parsed_dialogue)
-podcast_audio = podcast_script_to_audio(podcast_script)
+podcast_audio = podcast_script_to_audio(podcast_script, podcast_number)
 
 # upload to transistor fm
 

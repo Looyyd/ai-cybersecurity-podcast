@@ -130,8 +130,8 @@ def parsed_dialogue_to_audio_files(parsed_dialogue):
         else:
             # request the api for each person
             response = tts(line["dialogue"], line["person"])
-            print(response.headers["Content-Type"])
             print(response)
+            print(response.headers["Content-Type"])
             assert response.headers["Content-Type"] == "audio/mpeg"
             with open("audio/{}.mp3".format(i), "wb") as file:
                 file.write(response.content)
