@@ -31,8 +31,9 @@ def create_podcast_audio(podcast_number):
     podcast_script = import_string_from_file("podcast/script{}.txt".format(podcast_number))
     parsed_dialogue = parse_dialogue(podcast_script)
     # TODO: add path to audio files
-    podcast_audio = podcast_script_to_audio(podcast_script, podcast_number)
-    print("Audio files created in audio folder")
+    file_path="podcast"
+    podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path)
+    print("Audio files created in {}".format(file_path))
 
 # function to upload audio files
 def upload_audio_files(podcast_number):
@@ -49,7 +50,7 @@ def main(episode_number, step):
     elif step == 2:
         create_podcast_script(episode_number)
     elif step == 3:
-        create_podcast_audio(episode_number)
+        create_podcast_audio(episode_number, file_path="podcast")
     elif step == 4:
         upload_audio_files(episode_number)
     else :

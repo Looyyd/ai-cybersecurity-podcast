@@ -96,12 +96,11 @@ def move_audio_files(input_folder, output_folder):
             shutil.move(input_path, output_path)
 
 # function that takes audio lines and makes them into the podcast audio
-def audio_files_to_podcast(podcast_number):
-    input_folder = "audio"
-    output_file = "podcasts/{}.mp3".format(podcast_number)
-    concatenate_audio_files(input_folder, output_file)
-    # archive the audio files
-    move_audio_files(input_folder, "archive/audio_archive{}".format(podcast_number))
+def audio_files_to_podcast(podcast_number, file_path_audio_input, file_path_output):
+    output_file = "{}/podcast{}.mp3".format(file_path_output, podcast_number)
+    concatenate_audio_files(file_path_audio_input, output_file)
+    #TODO : add archiving to another function in main
+    #move_audio_files(input_folder, "archive/audio_archive{}".format(podcast_number))
 
 
 # function that gets the list of available voices from the api
@@ -115,16 +114,16 @@ def get_voices():
     return voices
 
 # function that takes in an array of dialogue lines and returns the audio files
-def parsed_dialogue_to_audio_files(parsed_dialogue):
+def parsed_dialogue_to_audio_files(parsed_dialogue, file_path):
     i=0
     for line in parsed_dialogue:
         i = i+1
         # if person is sound effect, add sound effect from assets folder
         if line["person"] == "#transition":
-            shutil.copy("assets/transition.mp3", "audio/{}.mp3".format(i))
+            shutil.copy("assets/transition.mp3", "{}/{}.mp3".format(file_path, i))
             continue
         elif line["person"] == "#jingle":
-            shutil.copy("assets/jingle.mp3", "audio/{}.mp3".format(i))
+            shutil.copy("assets/jingle.mp3", "{}/{}.mp3".format(file_path, i))
             continue
         #if line is not sound effect, request the api for the audio
         else:
@@ -137,12 +136,12 @@ def parsed_dialogue_to_audio_files(parsed_dialogue):
                 file.write(response.content)
 
 # function that takes the gpt4 dialogue output and makes it into the podcast audio
-def podcast_script_to_audio(script, podcast_number):
+def podcast_script_to_audio(script, podcast_number, file_path="podcast"):
     #parse dialogue into array of json objects
     parsed_dialogue = parse_dialogue(script)
     #print(parsed_dialogue)
     # make the audio files using eleven labs api
-    parsed_dialogue_to_audio_files(parsed_dialogue)
+    parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path+"/audio")
     # make the podcast by joining audio files together
-    audio_files_to_podcast(podcast_number)
+    audio_files_to_podcast(podcast_number, file_path+"/audio", file_path)
 
