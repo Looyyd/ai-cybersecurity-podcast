@@ -27,11 +27,10 @@ def create_podcast_script(podcast_number):
     print("Podcast script created at {}".format(file_path))
 
 # create the audio files from the podcast script file
-def create_podcast_audio(podcast_number):
-    podcast_script = import_string_from_file("podcast/script{}.txt".format(podcast_number))
+def create_podcast_audio(podcast_number, file_path="podcast"):
+    podcast_script = import_string_from_file("{}/script{}.txt".format(file_path, podcast_number))
     parsed_dialogue = parse_dialogue(podcast_script)
     # TODO: add path to audio files
-    file_path="podcast"
     podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path)
     print("Audio files created in {}".format(file_path))
 

@@ -2,6 +2,7 @@ import requests
 import os
 import re
 import shutil
+from libs.file_manipulation import *
 from pydub import AudioSegment
 
 # CONSTANTS
@@ -116,23 +117,23 @@ def get_voices():
 # function that takes in an array of dialogue lines and returns the audio files
 def parsed_dialogue_to_audio_files(parsed_dialogue, file_path):
     i=0
+    create_directory_if_not_exists(file_path)
     for line in parsed_dialogue:
         i = i+1
+        audio_path = "{}/{}.mp3".format(file_path, i)
         # if person is sound effect, add sound effect from assets folder
         if line["person"] == "#transition":
-            shutil.copy("assets/transition.mp3", "{}/{}.mp3".format(file_path, i))
+            shutil.copy("assets/transition.mp3", audio_path)
             continue
         elif line["person"] == "#jingle":
-            shutil.copy("assets/jingle.mp3", "{}/{}.mp3".format(file_path, i))
+            shutil.copy("assets/jingle.mp3", audio_path)
             continue
         #if line is not sound effect, request the api for the audio
         else:
             # request the api for each person
             response = tts(line["dialogue"], line["person"])
-            print(response)
-            print(response.headers["Content-Type"])
             assert response.headers["Content-Type"] == "audio/mpeg"
-            with open("audio/{}.mp3".format(i), "wb") as file:
+            with open(audio_path, "wb") as file:
                 file.write(response.content)
 
 # function that takes the gpt4 dialogue output and makes it into the podcast audio

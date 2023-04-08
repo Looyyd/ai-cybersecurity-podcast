@@ -7,10 +7,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 DEBUG = True
 
-def create_directory_if_not_exists(directory_path):
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path)
-
 # function that uses gpt4 to complete a prompt
 def gpt4_complete(prompt):
     conversation = [
