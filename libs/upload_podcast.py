@@ -25,7 +25,7 @@ def upload_audio(upload_url, file_path):
     return response
 
 # create a new episode
-def create_episode(show_id, title, description, audio_url, number=1):
+def create_episode(show_id, title, description, audio_url, number=1, keywords=""):
     url = "https://api.transistor.fm/v1/episodes"
     headers = {"x-api-key": TRANSISTOR_API_KEY}
     data = {
@@ -33,7 +33,8 @@ def create_episode(show_id, title, description, audio_url, number=1):
         "episode[title]": title,
         "episode[number]": number,
         "episode[description]": description,
-        "episode[audio_url]": audio_url
+        "episode[audio_url]": audio_url,
+        "episode[keywords]": keywords
     }
     
     response = requests.post(url, headers=headers, data=data)

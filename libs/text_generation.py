@@ -244,8 +244,19 @@ def create_podcast_description(podcast_number, podcast_script):
             + "Here is the script:\n" + podcast_script
     podcast_description = gpt4_complete(prompt)
     return podcast_description
-# for debugging
 
+
+def create_podcast_keywords(podcast_number, podcast_script):
+    prompt = "You will be given a podcast script. You must write a list of comma separeted keywords that are relevant to the podcast script.\n\
+            Exemple keywords output: \n\
+            \"Cybersecurity, Iranian Hackers, MuddyWater, Ransomware, Apple, Zero-Day, Vulnerabilities, iOS, iPadOS, macOS, Safari, Former Employees, Password Risks\"\n\
+            You will generate the keywords for episode " + str(podcast_number) + ".\n\n" \
+            + "Here is the script:\n" + podcast_script
+    podcast_keywords = gpt4_complete(prompt)
+    return podcast_keywords
+
+
+# for debugging
 response_text='{ "title": "Microsoft Introduces GPT-4 AI-Powered Security Copilot Tool to Empower Defenders", "link": "https://thehackernews.com/2023/03/microsoft-introduces-gpt-4-ai-powered.html"}\n\
 { "title": "President Biden Signs Executive Order Restricting Use of Commercial Spyware", "link": "https://thehackernews.com/2023/03/president-biden-signs-executive-order.html"}\n\
 { "title": "North Korea\'s Kimsuky Evolves into Full-Fledged, Prolific APT", "link": "https://www.darkreading.com/threat-intelligence/north-korea-kimsuky-evolves-full-fledged-persistent-threat"}'
