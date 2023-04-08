@@ -36,14 +36,33 @@ def create_podcast_audio(podcast_number, file_path="podcast"):
 
 # function to upload audio files
 def upload_audio_files(podcast_number):
-    # TODO
-    #upload_audio(podcast_number)
-    return
+    file_path="podcast/podcast{}.mp3".format(podcast_number)
+    response = audio_file_to_podcast(file_path)
+    # archive episode id in text file for next step
+    episode_id = response["data"]["id"]
+    episode_id_path = "podcast/episode_id{}.txt".format(podcast_number)
+    with open(episode_id_path, "w") as f:
+        f.write(episode_id)
+    print("Episode draft created in transistor.fm")
+    return response
 
 # archive all podcast files
-def archive_podcast_files():
-    # TODO
+def archive_podcast_files(episode_number):
+    # put every file from podcast folder in a zip file and into archive folder
+    zip_path = "archive/podcast{}.zip".format(episode_number)
+    zip_and_delete_files("podcast", zip_path)
+    print("Podcast files archived in archive folder: {}".format(zip_path))
     return
+
+# publish episode
+def publish_episode(episode_number):
+    # get episode id from text file
+    episode_id_path = "podcast/episode_id{}.txt".format(episode_number)
+    with open(episode_id_path, "r") as f:
+        episode_id = f.read()
+    response = publish_episode_transitor(episode_id=episode_id)
+    print("Episode published on Transistor")
+    return response
 
 
 def main(episode_number, step):
@@ -56,9 +75,12 @@ def main(episode_number, step):
         create_podcast_script(episode_number)
     elif step == 3:
         create_podcast_audio(episode_number, file_path="podcast")
+        # TODO: create title and description from script
     elif step == 4:
         upload_audio_files(episode_number)
-        archive_podcast_files()
+        archive_podcast_files(episode_number=episode_number)
+    elif step == 5:
+        publish_episode(episode_number)
     else :
         print("Invalid step number.")
         exit()

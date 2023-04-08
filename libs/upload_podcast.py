@@ -2,6 +2,7 @@ import requests
 import os
 
 
+# API DOC: https://developers.transistor.fm/#episodes
 TRANSISTOR_API_KEY = os.getenv("TRANSISTOR_API_KEY")
 
 
@@ -24,13 +25,12 @@ def upload_audio(upload_url, file_path):
     return response
 
 # create a new episode
-def create_episode(show_id, title, summary, audio_url, number=1, description=""):
+def create_episode(show_id, title, description, audio_url, number=1):
     url = "https://api.transistor.fm/v1/episodes"
     headers = {"x-api-key": TRANSISTOR_API_KEY}
     data = {
         "episode[show_id]": show_id,
         "episode[title]": title,
-        "episode[summary]": summary,
         "episode[number]": number,
         "episode[description]": description,
         "episode[audio_url]": audio_url
@@ -44,6 +44,31 @@ def create_episode(show_id, title, summary, audio_url, number=1, description="")
         raise ValueError(f"Failed to create episode, status code: {response.status_code}, message: {response.text}")
 
 
+# function to publish an episode
+def publish_episode_transitor(episode_id, status="published"):
+    url = "https://api.transistor.fm/v1/episodes/{}/publish".format(episode_id)
+    headers = {"x-api-key": TRANSISTOR_API_KEY}
+    data = {
+        "episode[status]": show_id,
+    }
+    response = requests.post(url, headers=headers)
+    return response
+
+def audio_file_to_podcast(path_to_audio, title, description, podcast_number):
+    filename = os.path.basename(path_to_audio)
+    response = authorize_upload(filename=filename)
+    json_response = response.json()
+    upload_url = json_response['data']['attributes']['upload_url']
+    audio_url = json_response['data']['attributes']['audio_url']
+
+    response = upload_audio(upload_url, path_to_audio)
+
+    # hardcoded constant taken form get request
+    SHOW_ID = str(40581)
+    response = create_episode(SHOW_ID, title, description, audio_url, number=podcast_number)
+    # TODO: put episode id in a file
+    episode_id = response["data"]["id"]
+    return response
 
 if __name__ == '__main__':
     response = authorize_upload('test.mp3')
@@ -61,8 +86,14 @@ if __name__ == '__main__':
     print(response)
 
     show_id = str(40581)
-    response = create_episode(show_id, "test", "test", audio_url, number=podcast_number)
+    title = "test"
+    description = "test"
+    response = create_episode(show_id, title, description, audio_url, number=podcast_number)
     print(response)
+    # TODO: add description, transcript
+    episode_id = response["data"]["id"]
+    response = publish_episode_transitor(episode_id)
+
 
 
 
