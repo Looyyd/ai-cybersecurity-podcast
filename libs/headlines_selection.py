@@ -59,7 +59,6 @@ def select_headlines():
 
     headline_string = "\n".join(headlines)
 
-    #print(headline_string)
 
     # Base prompt
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
@@ -74,19 +73,13 @@ def select_headlines():
             + headline_string  \
             + "\n3 biggest stories:"
 
-
     response = gpt35_complete(prompt)
 
-
-    print("GPT response:")
-    #print(response)
     response_text = response
-    print(response_text)
 
     selected_headlines = []
     for line in response_text.splitlines():
         if line.startswith("{"):
             # headline string is in json format, change string to json
             selected_headlines.append(json.loads(line))
-    print(selected_headlines)
     return(selected_headlines)

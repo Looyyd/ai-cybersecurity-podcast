@@ -99,8 +99,6 @@ def headlines_to_podcast_script(selected_headlines, podcast_number):
     podcast_introduction = headlines_to_podcast_introduction(titles_string)
     # add jingle to podcast introduction
     podcast_introduction = podcast_introduction + "\n\n#jingle:\n"
-    print(podcast_introduction)
-
 
     podcast_segments = []
     # for each element in selected_headlines, get the text of the article and add it to the prompt
@@ -112,15 +110,12 @@ def headlines_to_podcast_script(selected_headlines, podcast_number):
         #add transition between segmentsn if not last segment
         if(i!=len(selected_headlines)):
             podcast_segment = podcast_segment + "\n\n#transition:\n"
-        print(podcast_segment)
         podcast_segments.append(podcast_segment)
         # TODO: test removing the SEGMENT {}:\n
         #segments_prompt+="\nSegment {}:\n".format(i) + podcast_segment
         segments_prompt+=podcast_segment
         i+=1
 
-
-    #print(podcast_segments)
 
     bad_podcast = podcast_introduction + segments_prompt
 
@@ -150,9 +145,6 @@ def headlines_to_podcast_script(selected_headlines, podcast_number):
 
     good_podcast = gpt4_complete(prompt)
 
-    # print the final podcast
-    print("PODCAST")
-    print(good_podcast)
     # for debugging purposes, write the final podcast to a file
     create_directory_if_not_exists("archives")
     create_directory_if_not_exists("archives/" + str(podcast_number))

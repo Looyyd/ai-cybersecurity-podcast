@@ -37,7 +37,13 @@ def create_podcast_audio(podcast_number):
 
 # function to upload audio files
 def upload_audio_files(podcast_number):
+    # TODO
     #upload_audio(podcast_number)
+    return
+
+# archive all podcast files
+def archive_podcast_files():
+    # TODO
     return
 
 
@@ -53,6 +59,7 @@ def main(episode_number, step):
         create_podcast_audio(episode_number, file_path="podcast")
     elif step == 4:
         upload_audio_files(episode_number)
+        archive_podcast_files()
     else :
         print("Invalid step number.")
         exit()
