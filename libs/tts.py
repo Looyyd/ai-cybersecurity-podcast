@@ -21,11 +21,15 @@ def read_dialogue_from_file(podcast_number):
 
 def parse_dialogue(dialogue):
     dialogue_list = []
-    lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z#]+:)', dialogue)
+    #lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z#]+:)', dialogue)
+    lines=dialogue.splitlines()
 
     for line in lines:
+        # if line is empty, skip
+        if len(line) <= 1:
+            continue
         #if first letter is #, it's a jingle or transition
-        if line.startswith("#"):
+        elif line.startswith("#"):
             # take the first word and append as a person
             sound_effect = line.split(' ', 1)[0]
             dialogue_list.append({"person": sound_effect, "dialogue": ""})
@@ -116,10 +120,10 @@ def parsed_dialogue_to_audio_files(parsed_dialogue):
     for line in parsed_dialogue:
         i = i+1
         # if person is sound effect, add sound effect from assets folder
-        if line["person"] == "transition":
+        if line["person"] == "#transition":
             shutil.copy("assets/transition.mp3", "audio/{}.mp3".format(i))
             continue
-        elif line["person"] == "jingle":
+        elif line["person"] == "#jingle":
             shutil.copy("assets/jingle.mp3", "audio/{}.mp3".format(i))
             continue
         #if line is not sound effect, request the api for the audio

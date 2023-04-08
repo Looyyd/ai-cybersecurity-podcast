@@ -1,37 +1,36 @@
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
-import google.auth
+import requests
+import os
 
-def get_authenticated_service():
-    # Replace with your own OAuth 2.0 client ID and secret
-    credentials = Credentials.from_authorized_user_file('secrets/client_secret.json', scopes=['https://www.googleapis.com/auth/youtube.upload'])
-    return build('youtube', 'v3', credentials=credentials)
 
-def upload_video_youtube(youtube, file_path, title, description):
-    body = {
-        'snippet': {
-            'title': title,
-            'description': description,
-            'categoryId': '22'
-        },
-        'status': {
-            'privacyStatus': 'public'
-        }
-    }
+TRANSISTOR_API_KEY = os.getenv("TRANSISTOR_API_KEY")
 
-    with open(file_path, 'rb') as video_file:
-        request = youtube.videos().insert(
-            part=','.join(body.keys()),
-            body=body,
-            media_body=google.auth.transport.requests.MediaFileUpload(video_file, chunksize=-1, resumable=True)
-        )
-        response = request.execute()
 
-    print(f'Video was uploaded with video ID "{response["id"]}" and title "{response["snippet"]["title"]}".')
+# Authorize an episode audio upload
+# returns an url to upload the audio to
+def authorize_upload(filename):
+    url = 'https://api.transistor.fm/v1/episodes/authorize_upload'
+    headers = {'x-api-key': TRANSISTOR_API_KEY}
+    params = {'filename': filename}
 
+    response = requests.get(url, headers=headers, params=params)
+    return response
+
+# upload audio to the url returned by authorize_upload
+def upload_audio(upload_url, file_path):
+    headers = {"Content-Type": "audio/mpeg"}
+    with open(file_path, "rb") as audio_file:
+        response = requests.put(upload_url, headers=headers, data=audio_file)
+
+    return response
 
 
 if __name__ == '__main__':
-    youtube = get_authenticated_service()
-    upload_video_youtube(youtube, 'path/to/your/video.mp4', 'Podcast Episode Title', 'Podcast Episode Description')
+    response = authorize_upload('test.mp3')
+    print(response.json())
+    json_response = response.json()
+    upload_url = json_response['data']['attributes']['upload_url']
+    audio_url = json_response['data']['attributes']['audio_url']
+    print(upload_url)
+    print(audio_url)
+
+

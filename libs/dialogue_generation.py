@@ -7,6 +7,20 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 DEBUG = True
 
+# Example podcast script
+exemple_podcast_script = """
+Jane: Welcome to the first episode of The Cybersecurity AI Daily, where we bring you the latest in cybersecurity news. I'm your host, John, joined by my lovely co-host, Jane. We aim to keep you informed and safe with a light tone that won't overwhelm the complexities of the cybersecurity world. So let's kick off today, shall we?
+John: Alright, so our first headline for today revolves around Iran-Based Hackers Caught Carrying Out Destructive Attacks Under Ransomware Guise. Microsoft Threat Intelligence team discovered the Iranian nation-state group, MuddyWater, executing destructive attacks on hybrid environments under a ransomware operation. The group has been active since 2017 and has targeted Middle Eastern nations.
+Jane: It's interesting to note that MuddyWater is thought to have collaborated with an emerging activity cluster, DEV-1084. DEV-1084 has been credited with conducting the destructive actions after MuddyWater successfully gained initial access. This suggests that the group could be a conglomerate rather than a single cohesive group, as Cisco Talos noted earlier this year.
+#transition
+John: Moving on to our next headline, we have Apple Releases Updates to Address Zero-Day Flaws in iOS, iPadOS, macOS, and Safari. Apple has recently released security updates addressing a pair of zero-day flaws that are being actively exploited. The vulnerabilities, CVE-2023-28205 and CVE-2023-28206, discovered by Google's Threat Analysis Group, and Amnesty International's Security Lab, relate to WebKit and IOSurfaceAccelerator.
+Jane: These vulnerabilities could lead to arbitrary code execution and enable an app to execute arbitrary code with kernel privileges. Apple users are advised to update their devices to ensure they're protected since the company is actively aware of the exploitation.
+#transition
+John: Finally, we take a look at a concerning finding about former employees and password usage. According to a survey by PasswordManager.com, 47% of former employees admitted to using their previous company's passwords after leaving. Even more troubling, 58% reported successful usage after they left the company. This highlights a major issue where organizations are not properly offboarding employees after their departure.
+Jane: It's essential for companies to have standard operating procedures in place to create a consistent schedule of updating passwords based on their criticality. As shown in the survey, employees accessing accounts after leaving isn't just a minor issue; around 10% admitted to trying to disrupt company activities using their access, which can lead to serious consequences.
+John: And with that, we've reached the end of today's episode of The Cybersecurity AI Daily. We hope you found the information valuable and that it helps you stay informed and secure in this ever-changing world.\n
+"""
+
 def create_directory_if_not_exists(directory_path):
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
@@ -46,7 +60,7 @@ def log(text):
         print(text)
 
 podcast_number = 1
-podcast_name = "The name of the podcast is The Cyber AI Daily"
+podcast_name = "The name of the podcast is The Cybersecurity AI Daily"
 podcast_number_prompt = "This is episode {} of the podcast.".format(podcast_number)
 podcast_characters =" The characters in the podcast are:\
     1. The host\n\
@@ -61,7 +75,9 @@ podcast_goal= "The goal of the podcast is to provide cybersecurity news to the l
 podcast_context = podcast_name \
     + podcast_goal \
     + podcast_number_prompt \
-    + podcast_characters
+    + podcast_characters \
+    + "Here is an example of a podcast script:\n" \
+    + exemple_podcast_script
 
 # function that takes headlines and creates a podcast introduction
 def headlines_to_podcast_introduction(headlines):
@@ -156,7 +172,7 @@ def headlines_to_podcast_script(selected_headlines):
             You MUST keep the name of the person speaking before each dialogue line.\
             You MUST add the name of the person speaking if is not already there. For exemple John:...\n\
             You MUST remove all text that's isn't a dialogue line.\n\
-            You MUST keep the lines that start with an #, because they signal when music should be added. For exemple do NOT delete #jingle: or #transition:" \
+            You MUST keep the lines that start with an #, because they signal when music should be added. For exemple do NOT delete #jingle or #transition" \
     + podcast_context \
     + bad_podcast
 
@@ -193,7 +209,7 @@ def headlines_to_podcast_script_gpt4(selected_headlines):
                         You must include an introduction and a conclusion.\
                             You must include a transition between each article.\n\n"
     # prompt for music
-    music_prompt = "You MUST mark transitions between articles with #transition:\n\
+    music_prompt = "You MUST mark transitions between articles with #transition.\n\
                     You MUST mark the end of the introduction with #jingle.\
                     You MUST but these markers on new lines. With only the marker on the line.\
                     For exemple in between the introduction and the first headline:\n \
