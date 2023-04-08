@@ -2,6 +2,7 @@ import json
 import openai
 import os
 from newspaper import Article
+from libs.file_manipulation import create_directory_if_not_exists
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -122,6 +123,8 @@ def headlines_to_podcast_script(selected_headlines, podcast_number):
     with open("archives/" + str(podcast_number) + "/firstdraft.txt", "w") as text_file:
         text_file.write(bad_podcast)
 
+    podcast_context = create_podcast_context(podcast_number)
+
     # take the segments and make a cohesive podcast out of it
     prompt = "You will be given a podcast script made by AI. Rewrite it without changing the facts.\n\
             You MUST write the script for a single episode, therefore only include \
@@ -222,8 +225,25 @@ def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     return podcast_script
 
 
+def create_podcast_title(podcast_number, podcast_script):
+    prompt = "You will be given a podcast script. You must write a podcast title that is relevant to the podcast script.\n\
+            Example title: \"Episode 1: Iranian Hackers, Apple's Zero-Day Flaws, and Ex-Employee Password Risks\"\
+                You will generate the title for Episode " + str(podcast_number) + ".\n\n" \
+            + "Here is the script:\n" + podcast_script
+    podcast_title = gpt4_complete(prompt)
+    return podcast_title
 
-
+def create_podcast_description(podcast_number, podcast_script):
+    prompt = "You will be given a podcast script. You must write a podcast description that is relevant to the podcast script.\n\
+            Example description: \"In the debut episode of The Cybersecurity AI Daily, hosts Jane and John discuss the latest cybersecurity news.\
+                  Topics include the Iranian nation-state group MuddyWater disguising destructive attacks as ransomware operations,\
+                      Apple's updates addressing zero-day vulnerabilities in iOS, iPadOS, macOS, and Safari, and the alarming rate of \
+                        former employees using their old company passwords after leaving their jobs. Tune in for a concise and informative overview \
+                            of today's most pressing cybersecurity concerns. \"\
+                You will generate the description for episode " + str(podcast_number) + ".\n\n" \
+            + "Here is the script:\n" + podcast_script
+    podcast_description = gpt4_complete(prompt)
+    return podcast_description
 # for debugging
 
 response_text='{ "title": "Microsoft Introduces GPT-4 AI-Powered Security Copilot Tool to Empower Defenders", "link": "https://thehackernews.com/2023/03/microsoft-introduces-gpt-4-ai-powered.html"}\n\

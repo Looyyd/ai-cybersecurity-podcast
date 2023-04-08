@@ -1,4 +1,4 @@
-from libs.dialogue_generation import *
+from libs.text_generation import *
 from libs.headlines_selection import *
 from libs.tts import *
 from libs.audio_to_video import *
@@ -34,10 +34,15 @@ def create_podcast_audio(podcast_number, file_path="podcast"):
     podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path)
     print("Audio files created in {}".format(file_path))
 
-# function to upload audio files
-def upload_audio_files(podcast_number):
+# function to create podcast draft
+def create_podcast_draft(podcast_number):
     file_path="podcast/podcast{}.mp3".format(podcast_number)
-    response = audio_file_to_podcast(file_path)
+
+    # get title and description from files
+    title = import_string_from_file("podcast/title{}.txt".format(podcast_number))
+    description = import_string_from_file("podcast/description{}.txt".format(podcast_number))
+
+    response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number)
     # archive episode id in text file for next step
     episode_id = response["data"]["id"]
     episode_id_path = "podcast/episode_id{}.txt".format(podcast_number)
@@ -64,6 +69,22 @@ def publish_episode(episode_number):
     print("Episode published on Transistor")
     return response
 
+def generate_title_and_description(episode_number):
+    # get script from file
+    script = import_string_from_file("podcast/script{}.txt".format(episode_number))
+
+    podcast_title = create_podcast_title(episode_number, script)
+    podcast_descption = create_podcast_description(episode_number, script)
+
+    # write title and description to files
+    title_path = "podcast/title{}.txt".format(episode_number)
+    description_path = "podcast/description{}.txt".format(episode_number)
+    export_string_to_file(podcast_title, title_path)
+    export_string_to_file(podcast_descption, description_path)
+
+    print("Wrote title and description to files: {} and {}".format(title_path, description_path))
+    return podcast_title, podcast_descption
+
 
 def main(episode_number, step):
     print(f"Episode number: {episode_number}")
@@ -75,9 +96,10 @@ def main(episode_number, step):
         create_podcast_script(episode_number)
     elif step == 3:
         create_podcast_audio(episode_number, file_path="podcast")
-        # TODO: create title and description from script
+        generate_title_and_description(episode_number)
     elif step == 4:
-        upload_audio_files(episode_number)
+        create_podcast_draft(episode_number)
+        # TODO: test the archivng process
         archive_podcast_files(episode_number=episode_number)
     elif step == 5:
         publish_episode(episode_number)
