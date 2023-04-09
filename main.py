@@ -12,7 +12,8 @@ import argparse
 
 # select headlines and put them in a file
 def create_headlines_file(podcast_number):
-    selected_headlines = select_headlines()
+    n_headline = 4
+    selected_headlines = select_headlines(4)
     file_path="podcast/headlines{}.json".format(podcast_number)
     export_json_to_file(selected_headlines, file_path)
     print("Headlines file created at {}".format(file_path))

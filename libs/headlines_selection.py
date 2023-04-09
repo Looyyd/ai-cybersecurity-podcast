@@ -42,7 +42,7 @@ def parse_date(date_string):
 
 
 # function that selects the most interesting headlines from the rss feeds
-def select_headlines():
+def select_headlines(n_headline):
     one_day_ago = datetime.now(timezone.utc) - timedelta(days=1)
     headlines = []
 
@@ -62,7 +62,7 @@ def select_headlines():
 
     # Base prompt
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
-            Determine what were the 3 most interesting news stories out of these headlines.\
+            Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
             Under each story, add links to the relevant articles.\
             Put the output into json. You MUST send 1 line per json object. Example output:\
             { \"title\": \"Article1\", \"link\": \"link1\" } \
