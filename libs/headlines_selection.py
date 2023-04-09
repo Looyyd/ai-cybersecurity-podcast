@@ -3,20 +3,16 @@ import openai
 import os
 import json
 from datetime import datetime, timedelta, timezone
-from libs.gpt import gpt35_complete
+from libs.gpt import gpt35_complete, gpt4_complete
 
 
-rss_feed_urls = ['https://feeds.feedburner.com/TheHackersNews',
-                 'https://www.cisa.gov/news.xml',
-                 #'http://www.reddit.com/r/netsec/.rss',
-                 'https://www.darkreading.com/rss.xml',
-                 ] 
 
 def parse_date(date_string):
     formats = [
         '%a, %d %b %Y %H:%M:%S %z', 
         '%a, %d %b %y %H:%M:%S %z',
-        '%Y-%m-%dT%H:%M:%S%z'
+        '%Y-%m-%dT%H:%M:%S%z',
+        '%d %b %Y %H:%M:%S %z'
     ]
 
     for fmt in formats:
@@ -28,14 +24,12 @@ def parse_date(date_string):
     raise ValueError(f"Date string '{date_string}' does not match any of the expected formats")
 
 
-
-
-# function that selects the most interesting headlines from the rss feeds
-def select_headlines(n_headline):
-    one_day_ago = datetime.now(timezone.utc) - timedelta(days=2)
+# function that takes in rss feeds and outputs a prompt for gpt
+def rss_to_prompt(rss_feeds_urls, time_delta_in_days):
     headlines = []
+    one_day_ago = datetime.now(timezone.utc) - timedelta(days=time_delta_in_days)
 
-    for  rss_feed_url in rss_feed_urls:
+    for  rss_feed_url in rss_feeds_urls:
         # Parse the RSS feed
         feed = feedparser.parse(rss_feed_url)
         # Extract and print titles of articles from the last week
@@ -47,6 +41,28 @@ def select_headlines(n_headline):
 
 
     headline_string = "\n".join(headlines)
+    return headline_string
+
+
+# function that selects the most interesting headlines from the rss feeds
+def select_headlines(n_headline, days):
+    rss_feed_urls = ['https://feeds.feedburner.com/TheHackersNews',
+                    'https://www.cisa.gov/news.xml',
+                    #'http://www.reddit.com/r/netsec/.rss',
+                    'https://www.darkreading.com/rss.xml',
+                    'https://www.bleepingcomputer.com/feed/',
+                    'https://www.csoonline.com/news/index.rss',
+                    'https://feeds.feedburner.com/securityweek',
+                    'https://cyware.com/allnews/feed',
+                    'https://cybersecuritynews.com/feed/' # seems mediocre quality
+                    ] 
+
+    # https://nakedsecurity.sophos.com/feed article extraction is not working
+    # https://www.scmagazine.com no rss feed
+    # https://www.infosecurity-magazine.com/news/ no rss
+    # https://www.helpnetsecurity.com/view/news/ no rss feed
+    
+    headlines_string = rss_to_prompt(rss_feed_urls, days)
 
     # generate example output with correct number of headlines
     example_output = ""
@@ -62,11 +78,11 @@ def select_headlines(n_headline):
             Put the output into json. You MUST send 1 line per json object. Example output:\n" \
             + example_output \
             + "Headlines:\n"  \
-            + headline_string  \
+            + headlines_string  \
             + "\n{} biggest stories:".format(n_headline)
     print(prompt)
 
-    response = gpt35_complete(prompt)
+    response = gpt4_complete(prompt)
 
     response_text = response
 
