@@ -1,13 +1,9 @@
 .env
+.DS_Store
 libs/__pycache__/
 
 secrets/
 
-audio/
-podcasts/
 archive/
-archives/
 
-videos/
-video/
 podcast/
