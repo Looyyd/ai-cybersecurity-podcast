@@ -74,8 +74,11 @@ def generate_metadata(episode_number):
     # get script from file
     script = import_string_from_file("podcast/script{}.txt".format(episode_number))
 
+    # get headlines from file
+    headlines = import_json_from_file("podcast/headlines{}.json".format(episode_number))
+
     podcast_title = create_podcast_title(episode_number, script)
-    podcast_description = create_podcast_description(episode_number, script)
+    podcast_description = create_podcast_description(episode_number, script, headlines)
     podcast_keywords = create_podcast_keywords(episode_number, script)
 
 
