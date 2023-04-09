@@ -3,19 +3,8 @@ import openai
 import os
 import json
 from datetime import datetime, timedelta, timezone
+from libs.gpt import gpt35_complete
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-def gpt35_complete(prompt):
-    conversation = [
-        {"role": "system", "content": "You are a helpful assistant that creates podcast scripts."},
-        {"role": "user", "content": prompt},
-    ]
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=conversation,
-    )
-    return response.choices[0].message.content
 
 rss_feed_urls = ['https://feeds.feedburner.com/TheHackersNews',
                  'https://www.cisa.gov/news.xml',
