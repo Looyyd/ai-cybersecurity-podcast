@@ -212,7 +212,20 @@ def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
                     Jane: Today, we're looking into an article about ...\n\n"
     # format prompt
     format_prompt = "You MUST write the script for a single episode, the episode must last between 5 and 10 minutes. \
-                    This means between 600 and 800 words more or less.\n"
+                    This means between 600 and 900 words more or less.\n"
+
+    # replace with gpt4 generated prompts
+    task_prompt = "You will be given a list of headlines and the content of the articles they correspond to.\
+          Your task is to write a podcast script that covers all the articles. The script must include an introduction,\
+              transitions between articles, and a conclusion."
+
+    music_prompt = "Please indicate transitions between articles with #transition, and mark the end of the introduction with #jingle. Place these markers on new lines, with only the marker on the line. For example, between the introduction and the first headline:\n\
+            John: That's right, Jane. So, let's dive right into our first headline.\n\
+            #jingle\n\
+            Jane: Today, we're looking into an article about ...\n"
+    
+    format_prompt = "Your script should be for a single episode, with a duration between 5 and 10 minutes.\
+          This equates to approximately 600 to 900 words. Make sure the content is engaging and informative."
 
     # create context using podcast number
     podcast_context = create_podcast_context(podcast_number)
@@ -264,11 +277,5 @@ def create_podcast_keywords(podcast_number, podcast_script):
             + "Here is the script:\n" + podcast_script
     podcast_keywords = gpt4_complete(prompt)
     return podcast_keywords
-
-
-# for debugging
-response_text='{ "title": "Microsoft Introduces GPT-4 AI-Powered Security Copilot Tool to Empower Defenders", "link": "https://thehackernews.com/2023/03/microsoft-introduces-gpt-4-ai-powered.html"}\n\
-{ "title": "President Biden Signs Executive Order Restricting Use of Commercial Spyware", "link": "https://thehackernews.com/2023/03/president-biden-signs-executive-order.html"}\n\
-{ "title": "North Korea\'s Kimsuky Evolves into Full-Fledged, Prolific APT", "link": "https://www.darkreading.com/threat-intelligence/north-korea-kimsuky-evolves-full-fledged-persistent-threat"}'
 
 
