@@ -4,6 +4,7 @@ import os
 from newspaper import Article
 from libs.file_manipulation import create_directory_if_not_exists
 from libs.gpt import gpt35_complete, gpt4_complete
+from datetime import date
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -134,7 +135,7 @@ def headlines_to_podcast_script(selected_headlines, podcast_number):
 # create podcast context string from podcast number
 def create_podcast_context(podcast_number):
     podcast_name = "The name of the podcast is The Cybersecurity AI Daily"
-    podcast_number_prompt = "This is episode {} of the podcast.".format(podcast_number)
+    podcast_number_prompt = "This is episode {} of the podcast. Today's date is {}".format(podcast_number, date.today().strftime("%B %d, %Y"))
     podcast_characters =" The characters in the podcast are:\
         1. The host\n\
             The host of the podcast is John. Here are John's characteristics, his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
