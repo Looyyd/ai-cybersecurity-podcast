@@ -43,7 +43,7 @@ def parse_date(date_string):
 
 # function that selects the most interesting headlines from the rss feeds
 def select_headlines(n_headline):
-    one_day_ago = datetime.now(timezone.utc) - timedelta(days=1)
+    one_day_ago = datetime.now(timezone.utc) - timedelta(days=2)
     headlines = []
 
     for  rss_feed_url in rss_feed_urls:
@@ -59,19 +59,23 @@ def select_headlines(n_headline):
 
     headline_string = "\n".join(headlines)
 
+    # generate example output with correct number of headlines
+    example_output = ""
+    for i in range(n_headline):
+        example_output += "{ \"title\": \"Article" + str(i) + "\", \"link\": \"link" + str(i) + "\" }"
+        example_output += "\n"
+
 
     # Base prompt
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
             Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
             Under each story, add links to the relevant articles.\
-            Put the output into json. You MUST send 1 line per json object. Example output:\
-            { \"title\": \"Article1\", \"link\": \"link1\" } \
-            { \"title\": \"Article2\", \"link\": \"link2\" } \
-            { \"title\": \"Article3\", \"link\": \"link3\" } \
-            }\n\n"\
+            Put the output into json. You MUST send 1 line per json object. Example output:\n" \
+            + example_output \
             + "Headlines:\n"  \
             + headline_string  \
-            + "\n3 biggest stories:"
+            + "\n{} biggest stories:".format(n_headline)
+    print(prompt)
 
     response = gpt35_complete(prompt)
 
