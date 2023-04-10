@@ -55,7 +55,7 @@ def publish_episode_transitor(episode_id, status="published"):
     response = requests.patch(url, headers=headers, data=data)
     return response
 
-def audio_file_to_podcast(path_to_audio, title, description, podcast_number, keywords=""):
+def audio_file_to_podcast(path_to_audio, title, description, podcast_number, keywords="", show_id=str(40581)):
     filename = os.path.basename(path_to_audio)
     response = authorize_upload(filename=filename)
     json_response = response.json()
@@ -64,10 +64,7 @@ def audio_file_to_podcast(path_to_audio, title, description, podcast_number, key
 
     response = upload_audio(upload_url, path_to_audio)
 
-    # hardcoded constant taken form get request
-    SHOW_ID = str(40581)
-    response = create_episode(SHOW_ID, title, description, audio_url, number=podcast_number, keywords=keywords)
-    # TODO: put episode id in a file
+    response = create_episode(show_id, title, description, audio_url, number=podcast_number, keywords=keywords)
     episode_id = response["data"]["id"]
     return response
 

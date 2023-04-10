@@ -6,7 +6,6 @@ from libs.upload_podcast import *
 from libs.file_manipulation import *
 import json
 import argparse
-#from libs.upload_podcast import *
 
 
 
@@ -43,7 +42,8 @@ def create_podcast_draft(podcast_number):
     description = import_string_from_file("podcast/description{}.txt".format(podcast_number))
     keywords = import_string_from_file("podcast/keywords{}.txt".format(podcast_number))
 
-    response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords)
+    SHOW_ID = str(40581)
+    response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords, show_id=SHOW_ID)
     # archive episode id in text file for next step
     episode_id = response["data"]["id"]
     episode_id_path = "podcast/episode_id{}.txt".format(podcast_number)
@@ -100,15 +100,20 @@ def main(episode_number, step, days=1):
     print(f"Step: {step}")
 
     if step == 1:
+        # select headlines and put them in a file
         create_headlines_file(episode_number, n_headlines=4, days=days)
     elif step == 2:
+        # create the podcast script from the headlines file
         create_podcast_script(episode_number)
     elif step == 3:
+        # create the audio files from the podcast script file, and generate metadata(description, title, keywords)
         create_podcast_audio(episode_number, file_path="podcast")
         generate_metadata(episode_number)
     elif step == 4:
+        # create the podcast draft on transistor.fm
         create_podcast_draft(episode_number)
     elif step == 5:
+        # publish episode on transistor.fm
         response = publish_episode(episode_number)
         archive_podcast_files(episode_number=episode_number)
     else :

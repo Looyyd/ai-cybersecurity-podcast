@@ -12,8 +12,6 @@ eleven_domain = "https://api.elevenlabs.io/"
 male_id="5AnsleRivsVBr8bi8Zh3"
 female_id="VtBQYxE6jqCxqZr2GUQO"
 
-#dialogue = "John: Welcome to the Cybersecurity Cybernews Podcast. Jane: That's right John. John: That's right Jane. Jane: Absolutely John!"
-# read the dialogue from the file archives/finaldraft.txt
 
 def read_dialogue_from_file(podcast_number):
     with open("archives/" + podcast_number + "/finaldraft.txt", "r") as text_file:
@@ -22,7 +20,6 @@ def read_dialogue_from_file(podcast_number):
 
 def parse_dialogue(dialogue):
     dialogue_list = []
-    #lines = re.split(r'(?<=[.!?])\s+(?=[A-Za-z#]+:)', dialogue)
     lines=dialogue.splitlines()
 
     for line in lines:
@@ -100,8 +97,6 @@ def move_audio_files(input_folder, output_folder):
 def audio_files_to_podcast(podcast_number, file_path_audio_input, file_path_output):
     output_file = "{}/podcast{}.mp3".format(file_path_output, podcast_number)
     concatenate_audio_files(file_path_audio_input, output_file)
-    #TODO : add archiving to another function in main
-    #move_audio_files(input_folder, "archive/audio_archive{}".format(podcast_number))
 
 
 # function that gets the list of available voices from the api
@@ -140,7 +135,6 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path):
 def podcast_script_to_audio(script, podcast_number, file_path="podcast"):
     #parse dialogue into array of json objects
     parsed_dialogue = parse_dialogue(script)
-    #print(parsed_dialogue)
     # make the audio files using eleven labs api
     parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path+"/audio")
     # make the podcast by joining audio files together
