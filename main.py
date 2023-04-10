@@ -33,7 +33,7 @@ def create_podcast_audio(podcast_number, file_path="podcast"):
     podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path)
     print("Audio files created in {}".format(file_path))
 
-# function to create podcast draft
+# create a podcast draft on transistor.fm using the audio files and metadata
 def create_podcast_draft(podcast_number):
     file_path="podcast/podcast{}.mp3".format(podcast_number)
 
@@ -52,7 +52,7 @@ def create_podcast_draft(podcast_number):
     print("Episode draft created in transistor.fm")
     return response
 
-# archive all podcast files
+# archive all podcast files, final step
 def archive_podcast_files(episode_number):
     # put every file from podcast folder in a zip file and into archive folder
     zip_path = "archive/podcast{}.zip".format(episode_number)
@@ -60,7 +60,7 @@ def archive_podcast_files(episode_number):
     print("Podcast files archived in archive folder: {}".format(zip_path))
     return
 
-# publish episode
+# publish episode on transistor.fm
 def publish_episode(episode_number):
     # get episode id from text file
     episode_id_path = "podcast/episode_id{}.txt".format(episode_number)
@@ -70,6 +70,7 @@ def publish_episode(episode_number):
     print("Episode published on Transistor")
     return response
 
+# generate podcast title, description and keywords
 def generate_metadata(episode_number):
     # get script from file
     script = import_string_from_file("podcast/script{}.txt".format(episode_number))

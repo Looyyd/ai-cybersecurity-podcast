@@ -28,6 +28,10 @@ def upload_audio(upload_url, file_path):
 def create_episode(show_id, title, description, audio_url, number=1, keywords=""):
     url = "https://api.transistor.fm/v1/episodes"
     headers = {"x-api-key": TRANSISTOR_API_KEY}
+
+    # replace newlines in description with html linebreaks <br>
+    description = description.replace("\n", "<br>")
+
     data = {
         "episode[show_id]": show_id,
         "episode[title]": title,
