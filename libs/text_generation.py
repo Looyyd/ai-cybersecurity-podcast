@@ -23,15 +23,6 @@ def log(text):
         print(text)
 
 
-# function that takes a string of headlines and returns an array of json objects
-def headlines_string_to_json_array(headlines_string):
-    selected_headlines = []
-    for line in response_text.splitlines():
-        if line.startswith("{"):
-            # headline string is in json format, change string to json
-            selected_headlines.append(json.loads(line))
-    return selected_headlines
-
 # fuction that takes an array of json headlines and returns a string that can be given to gpt4
 def json_headlines_to_prompt(headlines):
     titles_string = ""
@@ -40,8 +31,6 @@ def json_headlines_to_prompt(headlines):
         titles_string += "Headline {}".format(i) + headline["title"] + "\n"
         i+=1
     return titles_string
-
-
 
 
 # create podcast context string from podcast number
