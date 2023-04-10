@@ -77,6 +77,7 @@ def select_headlines(n_headline, days):
 
 
     # Base prompt
+    # TODO: put prompt into a seperate function
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
             Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
             For each story, add links to the relevant articles.\

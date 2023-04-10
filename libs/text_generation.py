@@ -103,7 +103,15 @@ Jane: Today, we're looking into ...\n\
                 #IMPORTANT: keep at least a sample dialogue otherwise the model will not dialogue
    
     format_prompt = "Your script should be for a single episode, with a duration between 5 and 10 minutes.\
-This equates to approximately 600 to 900 words. Make sure the content is engaging and informative. Make the characters exchange 3 to 5 times on each subject.\n"
+This equates to approximately 600 to 900 words. Make sure the content is engaging and informative. Make the characters exchange 3 to 5 times on each subject.\
+Example dialogue format for 1 exchange:\n\
+\"\"\"\n\
+John:[introduces the topic]\n\
+Jane:[gives technical details]\n\
+John:[asks a question on the details]\n\
+Jane:[answers the question]\n\
+John:[gives business impact and sums up the topic]\n\
+\"\"\"\n"
 
     # create context using podcast number
     podcast_context = create_podcast_context(podcast_number)
