@@ -35,17 +35,17 @@ def json_headlines_to_prompt(headlines):
 
 # create podcast context string from podcast number
 def create_podcast_context(podcast_number):
-    podcast_name = "The name of the podcast is The Cybersecurity AI Daily"
-    podcast_number_prompt = "This is episode {} of the podcast. Today's date is {}".format(podcast_number, date.today().strftime("%B %d, %Y"))
-    podcast_characters =" The characters in the podcast are:\
+    podcast_name = "The name of the podcast is The Cybersecurity AI Daily.\n"
+    podcast_number_prompt = "This is episode {} of the podcast. Today's date is {}.\n".format(podcast_number, date.today().strftime("%B %d, %Y"))
+    podcast_characters =" The characters in the podcast are:\n\
         1. The host\n\
-            The host of the podcast is John. Here are John's characteristics, his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
+            The host of the podcast is John. Here are John's characteristics, his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\n\
         John is a CISO at a large company. He has good foundational cybersecurity and computerscience knowledge, and great a understanding of businesses\n\
         2. The co-host\n\
-            The co-host of the podcast is Jane. Here are Jane's characteristics,his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\
+            The co-host of the podcast is Jane. Here are Jane's characteristics,his characteristics should be taken into account when creating the dialogue but never mentionned outloud:\n\
         Jane is security auditor at a smaller cybersecurity consulting firm. She has exceptionnal cybersecurity technical knowledge, but more limited business understanding.\n"
     #TODO: add podcast dynamic between characters
-    podcast_goal= "The goal of the podcast is to provide cybersecurity news to the listeners. The podcast is to be informative and factual but with a light tone."
+    podcast_goal= "The goal of the podcast is to provide cybersecurity news to the listeners. The podcast is to be informative and factual but with a light tone.\n"
     
     # Example podcast script
     exemple_podcast_script_template = """
@@ -66,36 +66,44 @@ def create_podcast_context(podcast_number):
         + podcast_goal \
         + podcast_number_prompt \
         + podcast_characters \
-        + "Here is an example template of a podcast script, when writing the script replace the instructions between brackets with actual dialogue:\n" \
-        + exemple_podcast_script_template
+        + "Here is an example template of a podcast script, when writing the script replace the instructions between brackets with actual dialogue:\n\
+            Exemple script template:\n\"\"\"" \
+        + exemple_podcast_script_template \
+        + "\"\"\"\n\n"
+
     return podcast_context
 
 # create headlines to podcast prompt
+# takes in headlines in json format and podcast episode number and returns a string that can be given to gpt4
 def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
+    # Try to follow best practices: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-openai-api
+
     # create prompt with all the articles content
-    articles_string = ""
+    articles_string = "Here are the articles you will be covering:\n"
     for headline_index, headline in enumerate(selected_headlines):
-        articles_string += "Headline " + str(headline_index) + ": " + headline["title"] + "\n"
+        articles_string += "Headline " + str(headline_index+1) + ": " + headline["title"] + "\n"
         for link_index, link in enumerate(headline["links"]):
             article_text = extract_text_from_url(link)
-            articles_string += "Link " + str(link_index) + ": " + link + "\n"
-            articles_string += article_text + "\n"
+            articles_string += "Link " + str(link_index+1) + ": " + link + "\n"
+            articles_string += "Content of link:\n\"\"\"\n" + article_text + "\n\"\"\"\n"
 
      
     # replace with gpt4 generated prompts
     task_prompt = "You will be given a list of headlines and the content of the articles they correspond to.\
-          Your task is to write a podcast script that covers all the articles. The script must include an introduction,\
-              transitions between articles, and a conclusion."
+Your task is to write a podcast script that covers all the articles. The script must include an introduction,\
+transitions between articles, and a conclusion.\n"
 
     music_prompt = "Please indicate transitions between articles with #transition, and mark the end of the introduction with #jingle. Place these markers on new lines, with only the marker on the line.\
-          For example, in between the introduction and the first headline:\n \
-            John: That's right, Jane. So, let's dive right into our first headline.\n\
-                #jingle\n \
-                Jane: Today, we're looking into ...\n\n"
+For example, in between the introduction and the first headline:\n\
+\"\"\"\n\
+John: That's right, Jane. So, let's dive right into our first headline.\n\
+#jingle\n\
+Jane: Today, we're looking into ...\n\
+\"\"\"\n"
                 #IMPORTANT: keep at least a sample dialogue otherwise the model will not dialogue
    
     format_prompt = "Your script should be for a single episode, with a duration between 5 and 10 minutes.\
-          This equates to approximately 600 to 900 words. Make sure the content is engaging and informative."
+This equates to approximately 600 to 900 words. Make sure the content is engaging and informative. Make the characters exchange 3 to 5 times on each subject.\n"
 
     # create context using podcast number
     podcast_context = create_podcast_context(podcast_number)
