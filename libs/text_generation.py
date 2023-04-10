@@ -147,36 +147,40 @@ def create_podcast_context(podcast_number):
     podcast_goal= "The goal of the podcast is to provide cybersecurity news to the listeners. The podcast is to be informative and factual but with a light tone."
     
     # Example podcast script
-    exemple_podcast_script = """
-    Jane: Welcome to the first episode of The Cybersecurity AI Daily, where we bring you the latest in cybersecurity news. I'm your host, John, joined by my lovely co-host, Jane. We aim to keep you informed and safe with a light tone that won't overwhelm the complexities of the cybersecurity world. So let's kick off today, shall we?
-    John: Alright, so our first headline for today revolves around Iran-Based Hackers Caught Carrying Out Destructive Attacks Under Ransomware Guise. Microsoft Threat Intelligence team discovered the Iranian nation-state group, MuddyWater, executing destructive attacks on hybrid environments under a ransomware operation. The group has been active since 2017 and has targeted Middle Eastern nations.
-    Jane: It's interesting to note that MuddyWater is thought to have collaborated with an emerging activity cluster, DEV-1084. DEV-1084 has been credited with conducting the destructive actions after MuddyWater successfully gained initial access. This suggests that the group could be a conglomerate rather than a single cohesive group, as Cisco Talos noted earlier this year.
+    exemple_podcast_script_template = """
+    [Introduction, present the days and todays headlines]
+    # jingle
+    [discussion about first headline]
     #transition
-    John: Moving on to our next headline, we have Apple Releases Updates to Address Zero-Day Flaws in iOS, iPadOS, macOS, and Safari. Apple has recently released security updates addressing a pair of zero-day flaws that are being actively exploited. The vulnerabilities, CVE-2023-28205 and CVE-2023-28206, discovered by Google's Threat Analysis Group, and Amnesty International's Security Lab, relate to WebKit and IOSurfaceAccelerator.
-    Jane: These vulnerabilities could lead to arbitrary code execution and enable an app to execute arbitrary code with kernel privileges. Apple users are advised to update their devices to ensure they're protected since the company is actively aware of the exploitation.
+    [discussion about second headline]
     #transition
-    John: Finally, we take a look at a concerning finding about former employees and password usage. According to a survey by PasswordManager.com, 47% of former employees admitted to using their previous company's passwords after leaving. Even more troubling, 58% reported successful usage after they left the company. This highlights a major issue where organizations are not properly offboarding employees after their departure.
-    Jane: It's essential for companies to have standard operating procedures in place to create a consistent schedule of updating passwords based on their criticality. As shown in the survey, employees accessing accounts after leaving isn't just a minor issue; around 10% admitted to trying to disrupt company activities using their access, which can lead to serious consequences.
-    John: And with that, we've reached the end of today's episode of The Cybersecurity AI Daily. We hope you found the information valuable and that it helps you stay informed and secure in this ever-changing world.\n
-    """
+    [...]
+    #transition
+    [discussion about last headline]
+    #transition
+    [Conclusion, thank the listeners for listening]
+   """
 
     podcast_context = podcast_name \
         + podcast_goal \
         + podcast_number_prompt \
         + podcast_characters \
-        + "Here is an example of a podcast script:\n" \
-        + exemple_podcast_script
+        + "Here is an example template of a podcast script:\n" \
+        + exemple_podcast_script_template
     return podcast_context
 
 # function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
 def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     # create prompt with all the articles content
     articles_string = ""
-    for headline in selected_headlines:
-        article_text = extract_text_from_url(headline["link"])
-        articles_string += "Headline: " + headline["title"] + "\n"
-        articles_string += article_text + "\n"
-    
+    for headline_index, headline in enumerate(selected_headlines):
+        articles_string += "Headline " + str(headline_index) + ": " + headline["title"] + "\n"
+        for link_index, link in enumerate(headline["links"]):
+            article_text = extract_text_from_url(link)
+            articles_string += "Link " + str(link_index) + ": " + link + "\n"
+            articles_string += article_text + "\n"
+
+     
     # podcast prompt
     task_prompt = "You will be given a list of headlines and the content of the articles they are about.\
                     You must write a podcast script that includes all the articles.\
@@ -243,7 +247,8 @@ def create_podcast_description(podcast_number, podcast_script, headlines):
     # add sources at the end of the description
     sources = "\nSources:\n"
     for headline in headlines:
-        sources += headline["link"] + "\n"
+        for link in headline["links"]:
+            sources += link + "\n"
 
     podcast_description = disclaimer + podcast_description + sources
     return podcast_description

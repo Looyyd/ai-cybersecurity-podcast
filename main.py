@@ -11,10 +11,8 @@ import argparse
 
 
 # select headlines and put them in a file
-def create_headlines_file(podcast_number):
-    n_headline = 4
-    days = 1
-    selected_headlines = select_headlines(n_headline, days)
+def create_headlines_file(podcast_number, n_headlines=4, days=1):
+    selected_headlines = select_headlines(n_headlines, days)
     file_path="podcast/headlines{}.json".format(podcast_number)
     export_json_to_file(selected_headlines, file_path)
     print("Headlines file created at {}".format(file_path))
@@ -97,12 +95,12 @@ def generate_metadata(episode_number):
     return podcast_title, podcast_description
 
 
-def main(episode_number, step):
+def main(episode_number, step, days=1):
     print(f"Episode number: {episode_number}")
     print(f"Step: {step}")
 
     if step == 1:
-        create_headlines_file(episode_number)
+        create_headlines_file(episode_number, n_headlines=4, days=days)
     elif step == 2:
         create_podcast_script(episode_number)
     elif step == 3:
@@ -122,7 +120,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process command line arguments.")
     parser.add_argument("--episode_number", type=int, required=True, help="Episode number.")
     parser.add_argument("--step", type=int, required=True, help="Step number.")
+    parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1)", default=1)
 
     args = parser.parse_args()
 
-    main(args.episode_number, args.step)
+    main(args.episode_number, args.step, days=args.days)

@@ -2,6 +2,7 @@ import feedparser
 import openai
 import os
 import json
+import random
 from datetime import datetime, timedelta, timezone
 from libs.gpt import gpt35_complete, gpt4_complete
 
@@ -67,20 +68,24 @@ def select_headlines(n_headline, days):
     # generate example output with correct number of headlines
     example_output = ""
     for i in range(n_headline):
-        example_output += "{ \"title\": \"Article" + str(i) + "\", \"link\": \"link" + str(i) + "\" }"
+        n_links = random.randint(1, 3)
+        links = ", ".join(["\"link" + str(i) + "_" + str(j) + "\"" for j in range(n_links)])
+        
+        example_output += "{ \"title\": \"Article" + str(i) + "\", \"links\": [" + links + "] }"
         example_output += "\n"
+
 
 
     # Base prompt
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
             Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
-            Under each story, add links to the relevant articles.\
-            Put the output into json. You MUST send 1 line per json object. Example output:\n" \
+            For each story, add links to the relevant articles.\
+            Put the output into json. You MUST send 1 line per json object, with the string title and an array of strings called links. Example output:\n" \
             + example_output \
             + "Headlines:\n"  \
             + headlines_string  \
             + "\n{} biggest stories:".format(n_headline)
-    print(prompt)
+    #print(prompt)
 
     response = gpt4_complete(prompt)
 
@@ -92,3 +97,9 @@ def select_headlines(n_headline, days):
             # headline string is in json format, change string to json
             selected_headlines.append(json.loads(line))
     return(selected_headlines)
+
+
+if __name__ == "__main__":
+    # Example usage
+    selected_headlines = select_headlines(5, 1)
+    print(selected_headlines)
