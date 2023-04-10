@@ -70,8 +70,8 @@ def create_podcast_context(podcast_number):
         + exemple_podcast_script_template
     return podcast_context
 
-# function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
-def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
+# create headlines to podcast prompt
+def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
     # create prompt with all the articles content
     articles_string = ""
     for headline_index, headline in enumerate(selected_headlines):
@@ -101,10 +101,13 @@ def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     podcast_context = create_podcast_context(podcast_number)
     # create full prompt
     full_prompt = task_prompt + podcast_context + music_prompt + format_prompt + articles_string
+    return full_prompt
 
+# function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
+def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
+    full_prompt = create_headlines_to_podcast_prompt(selected_headlines, podcast_number)
     # generate podcast script
     podcast_script = gpt4_complete(full_prompt)
-
     return podcast_script
 
 
