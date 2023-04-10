@@ -108,10 +108,9 @@ def main(episode_number, step, days=1):
         generate_metadata(episode_number)
     elif step == 4:
         create_podcast_draft(episode_number)
-        # TODO: test the archiving process
-        archive_podcast_files(episode_number=episode_number)
     elif step == 5:
-        publish_episode(episode_number)
+        response = publish_episode(episode_number)
+        archive_podcast_files(episode_number=episode_number)
     else :
         print("Invalid step number.")
         exit()

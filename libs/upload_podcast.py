@@ -50,12 +50,12 @@ def publish_episode_transitor(episode_id, status="published"):
     url = "https://api.transistor.fm/v1/episodes/{}/publish".format(episode_id)
     headers = {"x-api-key": TRANSISTOR_API_KEY}
     data = {
-        "episode[status]": show_id,
+        "episode[status]": status,
     }
-    response = requests.post(url, headers=headers)
+    response = requests.patch(url, headers=headers, data=data)
     return response
 
-def audio_file_to_podcast(path_to_audio, title, description, podcast_number):
+def audio_file_to_podcast(path_to_audio, title, description, podcast_number, keywords=""):
     filename = os.path.basename(path_to_audio)
     response = authorize_upload(filename=filename)
     json_response = response.json()
@@ -66,7 +66,7 @@ def audio_file_to_podcast(path_to_audio, title, description, podcast_number):
 
     # hardcoded constant taken form get request
     SHOW_ID = str(40581)
-    response = create_episode(SHOW_ID, title, description, audio_url, number=podcast_number)
+    response = create_episode(SHOW_ID, title, description, audio_url, number=podcast_number, keywords=keywords)
     # TODO: put episode id in a file
     episode_id = response["data"]["id"]
     return response

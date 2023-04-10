@@ -165,7 +165,7 @@ def create_podcast_context(podcast_number):
         + podcast_goal \
         + podcast_number_prompt \
         + podcast_characters \
-        + "Here is an example template of a podcast script:\n" \
+        + "Here is an example template of a podcast script, when writing the script replace the instructions between brackets with actual dialogue:\n" \
         + exemple_podcast_script_template
     return podcast_context
 
@@ -196,18 +196,20 @@ def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
                     Jane: Today, we're looking into an article about ...\n\n"
     # format prompt
     format_prompt = "You MUST write the script for a single episode, the episode must last between 5 and 10 minutes. \
-                    This means between 600 and 900 words more or less.\n"
+                    This means between 600 and 900 words more or less. You don't have to source the headlines during in the script, but you can mention that the sources are in the description(as always)\n"
 
     # replace with gpt4 generated prompts
     task_prompt = "You will be given a list of headlines and the content of the articles they correspond to.\
           Your task is to write a podcast script that covers all the articles. The script must include an introduction,\
               transitions between articles, and a conclusion."
 
-    music_prompt = "Please indicate transitions between articles with #transition, and mark the end of the introduction with #jingle. Place these markers on new lines, with only the marker on the line. For example, between the introduction and the first headline:\n\
+    music_prompt = "Please indicate transitions between articles with #transition, and mark the end of the introduction with #jingle. Place these markers on new lines, with only the marker on the line.\
+          For example, in between the introduction and the first headline:\n \
             John: That's right, Jane. So, let's dive right into our first headline.\n\
-            #jingle\n\
-            Jane: Today, we're looking into an article about ...\n"
-    
+                #jingle\n \
+                Jane: Today, we're looking into ...\n\n"
+                #IMPORTANT: keep at least a sample dialogue otherwise the model will not dialogue
+   
     format_prompt = "Your script should be for a single episode, with a duration between 5 and 10 minutes.\
           This equates to approximately 600 to 900 words. Make sure the content is engaging and informative."
 
