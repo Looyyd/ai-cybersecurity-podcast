@@ -3,7 +3,7 @@ import openai
 import os
 from newspaper import Article
 from libs.file_manipulation import create_directory_if_not_exists
-from libs.gpt import gpt35_complete, gpt4_complete
+from libs.gpt import gpt35_complete, gpt4_complete, gpt_complete_until_format
 from datetime import date
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -123,8 +123,27 @@ John:[gives business impact and sums up the topic]\n\
 def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     full_prompt = create_headlines_to_podcast_prompt(selected_headlines, podcast_number)
     # generate podcast script
-    podcast_script = gpt4_complete(full_prompt)
+    # TODO: trying self healing gpt4
+    podcast_script, error = gpt_complete_until_format(full_prompt, validate_podcast_script_format, debug=True)
+    #podcast_script = gpt4_complete(full_prompt)
     return podcast_script
+
+
+# function that takes in a podcast script and sees if it matches the format
+def validate_podcast_script_format(podcast_script):
+    # prompt that will be given to gpt for validation
+    validation_prompt=""
+    # check if all non blank lines start with a character name or a music marker
+    for line in podcast_script.splitlines():
+        if line.strip() != "":
+            if not line.startswith("#") and not line.startswith("John:") and not line.startswith("Jane:"):
+                validation_prompt += "FAIL. The line \"" + line + "\" does not start with a character name or a music marker.\n"
+                return False, validation_prompt
+    # passed lines start
+    validation_prompt += "OK. All lines start with a character name or a music marker.\n"
+
+    # all checks passed
+    return True, validation_prompt
 
 
 def create_podcast_title(podcast_number, podcast_script):

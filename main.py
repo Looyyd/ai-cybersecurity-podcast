@@ -116,6 +116,7 @@ def main(episode_number, step, days=1):
     elif step == 5:
         # publish episode on transistor.fm
         response = publish_episode(episode_number)
+        #TODO: archives every file not just the one from the episode number
         archive_podcast_files(episode_number=episode_number)
     else :
         print("Invalid step number.")
