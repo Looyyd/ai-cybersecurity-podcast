@@ -4,7 +4,7 @@ import os
 import json
 import random
 from datetime import datetime, timedelta, timezone
-from libs.gpt import gpt35_complete, gpt4_complete
+from libs.gpt import gpt35_complete, gpt4_complete, gpt_complete_until_format
 
 
 
@@ -89,7 +89,9 @@ def select_headlines(n_headline, days):
             + "\n{} biggest stories:".format(n_headline)
     #print(prompt)
 
-    response = gpt4_complete(prompt)
+    # TODO: test with validation
+    response = gpt_complete_until_format(prompt, validate_headlines_selection_output)
+    #response = gpt4_complete(prompt)
 
     response_text = response
 
@@ -100,6 +102,26 @@ def select_headlines(n_headline, days):
             selected_headlines.append(json.loads(line))
     return(selected_headlines)
 
+
+# function that validates the output of the gpt model for the headlines selection task
+def validate_headlines_selection_output(output):
+    validation_string=""
+    # check if output is valide json
+    try:
+        selected_headlines = []
+        for line in output.splitlines():
+            if line.startswith("{"):
+                # headline string is in json format, change string to json
+                selected_headlines.append(json.loads(line))
+    except json.decoder.JSONDecodeError:
+        validation_string += "FAIL. Output is not valid json. "
+        return False, validation_string
+
+    # passed json validation
+    validation_string += "PASS. Output is valid json. "
+
+    # passed all checks
+    return True, validation_string
 
 if __name__ == "__main__":
     # Example usage

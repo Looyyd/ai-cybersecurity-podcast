@@ -146,7 +146,7 @@ def higher_order_validate_podcast(n_headlines):
         return validate_podcast_script_format(script, n_headlines)
     return wrapper
 
-# function that takes in a podcast script and sees if it matches the format
+# lower order function that validates the format of the podcast script
 def validate_podcast_script_format(podcast_script, n_headlines):
     # prompt that will be given to gpt for validation
     validation_prompt=""
@@ -230,6 +230,28 @@ def validate_podcast_script_format(podcast_script, n_headlines):
     return True, validation_prompt
 
 
+# validate keywords format
+def validate_keywords_format(keywords):
+    validation_prompt = ""
+    # check if it's a single line
+    if keywords.count("\n") > 0:
+        validation_prompt += "FAIL. The keywords must be a single line.\n"
+        return False, validation_prompt
+    # passed single line check
+    validation_prompt += "OK. The keywords are a single line.\n"
+
+    # check if there are at least 5 keywords
+    if(len(keywords.split(",")) < 5):
+        validation_prompt += "FAIL. There are less than 5 comma separated keywords.\n"
+        return False, validation_prompt
+    # passed keywords check
+    validation_prompt += "OK. There are at least 5 comma separated keywords.\n"
+
+    # all checks passed
+    return True, validation_prompt
+
+
+
 def create_podcast_title(podcast_number, podcast_script):
     prompt = "You will be given a podcast script. You must write a podcast title that is relevant to the podcast script.\n\
             Example title: \"Episode 1: Iranian Hackers, Apple's Zero-Day Flaws, and Ex-Employee Password Risks\"\
@@ -268,7 +290,10 @@ def create_podcast_keywords(podcast_number, podcast_script):
             \"Cybersecurity, Iranian Hackers, MuddyWater, Ransomware, Apple, Zero-Day, Vulnerabilities, iOS, iPadOS, macOS, Safari, Former Employees, Password Risks\"\n\
             You will generate the keywords for episode " + str(podcast_number) + ".\n\n" \
             + "Here is the script:\n" + podcast_script
-    podcast_keywords = gpt4_complete(prompt)
+    
+    # TODO: try with validation
+    podcast_keywords = gpt_complete_until_format(prompt, validate_keywords_format, max_retries=3)
+    #podcast_keywords = gpt4_complete(prompt)
     return podcast_keywords
 
 
