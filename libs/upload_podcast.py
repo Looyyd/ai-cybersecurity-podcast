@@ -29,8 +29,8 @@ def create_episode(show_id, title, description, audio_url, number=1, keywords=""
     url = "https://api.transistor.fm/v1/episodes"
     headers = {"x-api-key": TRANSISTOR_API_KEY}
 
-    # replace newlines in description with html linebreaks <br>
-    description = description.replace("\n", "<br>")
+    # replace newlines in description with html linebreaks <br> and \n to fit all formats
+    description = description.replace("\n", "<br>\n")
 
     data = {
         "episode[show_id]": show_id,
