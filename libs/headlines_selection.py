@@ -57,6 +57,7 @@ def select_headlines(n_headline, days):
                     'https://cyware.com/allnews/feed',
                     'https://cybersecuritynews.com/feed/' # seems mediocre quality
                     ] 
+    max_links = 3
 
     # https://nakedsecurity.sophos.com/feed article extraction is not working
     # https://www.scmagazine.com no rss feed
@@ -80,7 +81,7 @@ def select_headlines(n_headline, days):
     # TODO: put prompt into a seperate function
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
             Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
-            For each story, add links to the relevant articles.\
+            For each story, add links to the relevant articles, but don't add more than "+ str(max_links) + " links per story.\
             Put the output into json. You MUST send 1 line per json object, with the string title and an array of strings called links. Example output:\n" \
             + example_output \
             + "Headlines:\n"  \
