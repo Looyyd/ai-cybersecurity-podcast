@@ -49,11 +49,13 @@ def gpt_complete_until_format(prompt, format_function, max_retries=5, system_pro
             print("retrying")
             print("retries: {}".format(retries))
             print("response_msg: {}".format(response_msg))
-            print("error: {}".format(error))
+            print("Format check response:\n {}".format(error))
 
         # add result and error to conversation
         conversation.append({"role": "assistant", "content": response_msg})
         # TODO: maybe add context to error message
+        # add context to error message
+        error_prompt = "The following errors were returned by the format function, please rewrite the last output to correct the errors:\n" + error
         conversation.append({"role": "user", "content": error})
         response = openai.ChatCompletion.create(
             model="gpt-4",

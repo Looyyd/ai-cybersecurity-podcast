@@ -73,6 +73,14 @@ def create_podcast_context(podcast_number):
 
     return podcast_context
 
+# sump up article content using gpt3.5
+def summarize_article_gpt35(article_text):
+    # create prompt
+    prompt = "Summarize the following article:\n\"\"\"\n" + article_text + "\n\"\"\"\n"
+    # generate summary
+    summary = gpt35_complete(prompt)
+    return summary
+
 # create headlines to podcast prompt
 # takes in headlines in json format and podcast episode number and returns a string that can be given to gpt4
 def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
@@ -84,8 +92,10 @@ def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
         articles_string += "Headline " + str(headline_index+1) + ": " + headline["title"] + "\n"
         for link_index, link in enumerate(headline["links"]):
             article_text = extract_text_from_url(link)
+            summarized_article_text = summarize_article_gpt35(article_text)
             articles_string += "Link " + str(link_index+1) + ": " + link + "\n"
-            articles_string += "Content of link:\n\"\"\"\n" + article_text + "\n\"\"\"\n"
+            #articles_string += "Content of link:\n\"\"\"\n" + article_text + "\n\"\"\"\n"
+            articles_string += "Summary of link content:\n\"\"\"\n" + summarized_article_text + "\n\"\"\"\n"
 
      
     # replace with gpt4 generated prompts
@@ -122,15 +132,22 @@ John:[gives business impact and sums up the topic]\n\
 # function that takes in headlines in json format and uses gpt4 to generate a full podcast script in 1 go
 def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     full_prompt = create_headlines_to_podcast_prompt(selected_headlines, podcast_number)
+    #get the number of headlines
+    n_headlines = len(selected_headlines)
     # generate podcast script
     # TODO: trying self healing gpt4
-    podcast_script, error = gpt_complete_until_format(full_prompt, validate_podcast_script_format, debug=True)
+    podcast_script, error = gpt_complete_until_format(full_prompt, higher_order_validate_podcast(n_headlines=n_headlines), debug=True)
     #podcast_script = gpt4_complete(full_prompt)
     return podcast_script
 
+# function of higher order that returns validate podcast_script with the rights parameters
+def higher_order_validate_podcast(n_headlines):
+    def wrapper(script):
+        return validate_podcast_script_format(script, n_headlines)
+    return wrapper
 
 # function that takes in a podcast script and sees if it matches the format
-def validate_podcast_script_format(podcast_script):
+def validate_podcast_script_format(podcast_script, n_headlines):
     # prompt that will be given to gpt for validation
     validation_prompt=""
     # check if all non blank lines start with a character name or a music marker
@@ -141,6 +158,73 @@ def validate_podcast_script_format(podcast_script):
                 return False, validation_prompt
     # passed lines start
     validation_prompt += "OK. All lines start with a character name or a music marker.\n"
+
+    # check if transition is equal to the number of headlines
+    n_transitions = 0
+    for line in podcast_script.splitlines():
+        if line.strip() == "#transition":
+            n_transitions += 1
+    if n_transitions != n_headlines :
+        validation_prompt += "FAIL. The number of transitions is not equal to the number of headlines1. There must be a transition between every headline, and between the last headline and the transition\n"
+        return False, validation_prompt
+    # passed transition check
+    validation_prompt += "OK. The number of transitions is equal to the number of headlines.\n"
+
+    # there must be a single jingle at the beginning, after the introduction
+    # check that jingle is the first sound effect
+    for line in podcast_script.splitlines():
+        # if the line is not a sound effect, continue
+        if not line.startswith("#"):
+            continue
+        # if the line is a sound effect, check if it is a jingle
+        if line.strip() == "#jingle":
+            # if it is a jingle, break
+            break
+        else:
+            # if it is not a jingle, fail
+            validation_prompt += "FAIL. The first sound effect is not a jingle.\n"
+            return False, validation_prompt
+    # passed jingle check
+    validation_prompt += "OK. The first sound effect is a jingle.\n"
+
+    # There must be a single jingle
+    n_jingles = 0
+    for line in podcast_script.splitlines():
+        if line.strip() == "#jingle":
+            n_jingles += 1
+    if n_jingles != 1:
+        validation_prompt += "FAIL. There must be a single jingle.\n"
+        return False, validation_prompt
+    # passed jingle check
+    validation_prompt += "OK. There is a single jingle.\n"
+
+    # check if there is at least an average of 3 exchanges per section(in between 2 sound effects)
+    n_lines= 0
+    wanted_exchange = 3
+    for line in podcast_script.splitlines():
+        #if line is empty, continue
+        if line.strip() == "":
+            continue
+        # if line is sound effect, continue
+        if line.startswith("#"):
+            continue
+        # if line is dialogue(start with Person:), increment n_lines
+        # TODO: don't hardcode the names
+        if line.startswith("John:") or line.startswith("Jane:"):
+            n_lines += 1
+    # add 2 for conclusion and introduction
+    average_exchange = n_lines / (n_headlines + 2)
+    if (average_exchange < wanted_exchange):
+        validation_prompt += "FAIL. The average number of exchanges per section is less than " + str(wanted_exchange) + ". Please add more exchanges in the dialogue.\n"
+        return False, validation_prompt
+    # passed average exchange check
+    validation_prompt += "OK. The average number of exchanges per section is at least " + str(wanted_exchange) + ".\n"
+
+    # debug check, verify the first line id #DEBUG
+    #TODO: remove this check
+    if not podcast_script.splitlines()[0].startswith("#DEBUG"):
+        validation_prompt += "FAIL. The first line is not #DEBUG.\n"
+        return False, validation_prompt
 
     # all checks passed
     return True, validation_prompt
