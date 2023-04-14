@@ -220,12 +220,6 @@ def validate_podcast_script_format(podcast_script, n_headlines):
     # passed average exchange check
     validation_prompt += "OK. The average number of exchanges per section is at least " + str(wanted_exchange) + ".\n"
 
-    # debug check, verify the first line id #DEBUG
-    #TODO: remove this check
-    if not podcast_script.splitlines()[0].startswith("#DEBUG"):
-        validation_prompt += "FAIL. The first line is not #DEBUG.\n"
-        return False, validation_prompt
-
     # all checks passed
     return True, validation_prompt
 
