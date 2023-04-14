@@ -90,7 +90,7 @@ def select_headlines(n_headline, days):
     #print(prompt)
 
     # TODO: test with validation
-    response = gpt_complete_until_format(prompt, validate_headlines_selection_output)
+    response, error = gpt_complete_until_format(prompt, validate_headlines_selection_output)
     #response = gpt4_complete(prompt)
 
     response_text = response

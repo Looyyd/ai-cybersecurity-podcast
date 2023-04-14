@@ -292,7 +292,7 @@ def create_podcast_keywords(podcast_number, podcast_script):
             + "Here is the script:\n" + podcast_script
     
     # TODO: try with validation
-    podcast_keywords = gpt_complete_until_format(prompt, validate_keywords_format, max_retries=3)
+    podcast_keywords, error = gpt_complete_until_format(prompt, validate_keywords_format, max_retries=3)
     #podcast_keywords = gpt4_complete(prompt)
     return podcast_keywords
 
