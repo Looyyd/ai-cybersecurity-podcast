@@ -9,11 +9,19 @@ import argparse
 
 
 # select headlines and put them in a file
-def create_headlines_file(podcast_number, n_headlines=4, days=1):
+def create_headlines_file(podcast_number, n_headlines=4, days=1, file_env="OS"):
     selected_headlines = select_headlines(n_headlines, days)
-    file_path="podcast/headlines{}.json".format(podcast_number)
-    export_json_to_file(selected_headlines, file_path)
+    file_path="podcasts/podcast{}/headlines.json".format(podcast_number)
+    
+    # TODO: better error handling
+    try:
+        export_json_to_file(selected_headlines, file_path, file_env=file_env)
+    except Exception:
+        print("Failed to create headlines file")
+        print(Exception)
+        exit(1)
     print("Headlines file created at {}".format(file_path))
+    # TODO: return something useful?
 
 # create the podcast script from the headlines file
 def create_podcast_script(podcast_number):
@@ -95,13 +103,13 @@ def generate_metadata(episode_number):
     return podcast_title, podcast_description
 
 
-def main(episode_number, step, days=1):
+def main(episode_number, step, days=1, file_env="OS"):
     print(f"Episode number: {episode_number}")
     print(f"Step: {step}")
 
     if step == 1:
         # select headlines and put them in a file
-        create_headlines_file(episode_number, n_headlines=4, days=days)
+        create_headlines_file(episode_number, n_headlines=4, days=days, file_env=file_env)
     elif step == 2:
         # create the podcast script from the headlines file
         create_podcast_script(episode_number)
@@ -126,8 +134,8 @@ if __name__ == "__main__":
     parser.add_argument("--episode_number", type=int, required=True, help="Episode number.")
     parser.add_argument("--step", type=int, required=True, help="Step number.")
     parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1)", default=1)
-    # TODO: add file environment variable
+    parser.add_argument("--file_env", type=str, required=False, help="File environment variable. (default: OS, can be OS or AZURE)", default="OS")
 
     args = parser.parse_args()
 
-    main(args.episode_number, args.step, days=args.days)
+    main(args.episode_number, args.step, days=args.days, file_env=args.file_env)

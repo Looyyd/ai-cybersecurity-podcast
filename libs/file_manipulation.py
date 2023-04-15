@@ -1,13 +1,23 @@
 import json
 import os
 import zipfile
-from azure.storage.blob import BlobClient
+from azure.storage.blob import BlobClient, BlobServiceClient, ResourceExistsError, ResourceNotFoundError
+from azure.identity import DefaultAzureCredential
 
 
 def get_blob_client(container_name, blob_name):
     connection_string = os.environ["AZURE_CONNECTION_STRING"]
     blob_client = BlobClient.from_connection_string(connection_string, container_name, blob_name)
     return blob_client
+
+# TODO: fix/setup authentication
+def get_blob_service_client():
+    account_name = "<your_storage_account_name>"
+    account_url = f"https://{account_name}.blob.core.windows.net"
+    credential = DefaultAzureCredential()
+    
+    blob_service_client = BlobServiceClient(account_url=account_url, credential=credential)
+    return blob_service_client
 
 # file environment specifies if azure context or local context
 # example usages:
@@ -73,6 +83,27 @@ def create_directory_if_not_exists(directory_path, file_environment='OS'):
         pass
     else:
         raise ValueError("Invalid file_environment value. Must be 'AZURE' or 'OS'.")
+
+def create_blob_if_not_exists(container_name, blob_name):
+    blob_service_client = get_blob_service_client()
+    container_client = blob_service_client.get_container_client(container_name)
+    
+    # Create the container if it does not exist
+    try:
+        container_client.create_container()
+    except ResourceExistsError:
+        pass
+    
+    # Check if the blob exists
+    blob_client = container_client.get_blob_client(blob_name)
+    try:
+        blob_client.get_blob_properties()
+        print(f"Blob {blob_name} already exists in container {container_name}.")
+    except ResourceNotFoundError:
+        # Create an empty blob if it does not exist
+        blob_client.upload_blob(b"", overwrite=True)
+        print(f"Created blob {blob_name} in container {container_name}.")
+
 
 def zip_and_delete_files(folder_path, zip_name, file_environment='OS'):
     if file_environment == 'OS':

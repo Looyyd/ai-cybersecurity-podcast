@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "your_script.py", "--episode_number", "420", "--step", "1"]
+CMD ["python", "main.py", "--episode_number", "420", "--step", "1", "--file_env", "AZURE"]
