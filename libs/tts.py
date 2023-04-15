@@ -128,15 +128,17 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path):
             # request the api for each person
             response = tts(line["dialogue"], line["person"])
             assert response.headers["Content-Type"] == "audio/mpeg"
-            with open(audio_path, "wb") as file:
-                file.write(response.content)
+            #with open(audio_path, "wb") as file:
+                #file.write(response.content)
+            # TODO: does this work with audio?
+            export_string_to_file(response.content, audio_path)
 
 # function that takes the gpt4 dialogue output and makes it into the podcast audio
-def podcast_script_to_audio(script, podcast_number, file_path="podcast"):
+def podcast_script_to_audio(script, podcast_number, file_path="podcasts"):
     #parse dialogue into array of json objects
     parsed_dialogue = parse_dialogue(script)
     # make the audio files using eleven labs api
-    parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path+"/audio")
+    parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path+"/podcast{}/audio".format(podcast_number))
     # make the podcast by joining audio files together
     audio_files_to_podcast(podcast_number, file_path+"/audio", file_path)
 

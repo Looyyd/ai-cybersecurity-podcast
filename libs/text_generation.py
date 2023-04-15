@@ -2,7 +2,7 @@ import json
 import openai
 import os
 from newspaper import Article
-from libs.file_manipulation import create_directory_if_not_exists
+from libs.file_manipulation import create_directory_if_not_exists, export_string_to_file
 from libs.gpt import gpt35_complete, gpt4_complete, gpt_complete_until_format
 from datetime import date
 
@@ -96,8 +96,7 @@ def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
 
             # write summary to file
             create_directory_if_not_exists("podcast/summaries")
-            with open("podcast/summaries/summary{}_{}_{}.txt".format(podcast_number,headline_index+1, link_index+1), "w") as f:
-                f.write(summarized_article_text)
+            export_string_to_file(summarized_article_text, "podcasts/podcast{}/summaries/summary_{}_{}.txt".format(podcast_number,headline_index+1, link_index+1))
 
             articles_string += "Link " + str(link_index+1) + ": " + link + "\n"
             #articles_string += "Content of link:\n\"\"\"\n" + article_text + "\n\"\"\"\n"

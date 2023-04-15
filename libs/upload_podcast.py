@@ -1,5 +1,6 @@
 import requests
 import os
+from libs.file_manipulation import import_string_from_file
 
 
 # API DOC: https://developers.transistor.fm/#episodes
@@ -19,8 +20,9 @@ def authorize_upload(filename):
 # upload audio to the url returned by authorize_upload
 def upload_audio(upload_url, file_path):
     headers = {"Content-Type": "audio/mpeg"}
-    with open(file_path, "rb") as audio_file:
-        response = requests.put(upload_url, headers=headers, data=audio_file)
+    data = import_string_from_file(file_path)
+    #TODO: test file manipulation
+    response = requests.put(upload_url, headers=headers, data=data)
 
     return response
 

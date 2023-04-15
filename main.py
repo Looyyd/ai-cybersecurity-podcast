@@ -25,35 +25,35 @@ def create_headlines_file(podcast_number, n_headlines=4, days=1, file_env="OS"):
 
 # create the podcast script from the headlines file
 def create_podcast_script(podcast_number):
-    selected_headlines = import_json_from_file("podcast/headlines{}.json".format(podcast_number))
+    selected_headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(podcast_number))
     podcast_script = headlines_to_podcast_script_gpt4(selected_headlines, podcast_number)
     
-    file_path="podcast/script{}.txt".format(podcast_number)
+    file_path="podcasts/podcast{}/script.txt".format(podcast_number)
     export_string_to_file(podcast_script, file_path)
     print("Podcast script created at {}".format(file_path))
 
 # create the audio files from the podcast script file
-def create_podcast_audio(podcast_number, file_path="podcast"):
-    podcast_script = import_string_from_file("{}/script{}.txt".format(file_path, podcast_number))
+def create_podcast_audio(podcast_number, file_path="podcasts"):
+    podcast_script = import_string_from_file("{}/podcast{}/script.txt".format(file_path, podcast_number))
     parsed_dialogue = parse_dialogue(podcast_script)
     # TODO: add path to audio files
     podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path)
-    print("Audio files created in {}".format(file_path))
+    print("Audio files created in {}/podcast{}/script.txt".format(file_path, podcast_number))
 
 # create a podcast draft on transistor.fm using the audio files and metadata
 def create_podcast_draft(podcast_number):
-    file_path="podcast/podcast{}.mp3".format(podcast_number)
+    file_path="podcasts/podcast{}/audio.mp3".format(podcast_number)
 
     # get title and description from files
-    title = import_string_from_file("podcast/title{}.txt".format(podcast_number))
-    description = import_string_from_file("podcast/description{}.txt".format(podcast_number))
-    keywords = import_string_from_file("podcast/keywords{}.txt".format(podcast_number))
+    title = import_string_from_file("podcasts/podcast{}/title.txt".format(podcast_number))
+    description = import_string_from_file("podcasts/podcast{}/description.txt".format(podcast_number))
+    keywords = import_string_from_file("podcasts/podcast{}/keywords.txt".format(podcast_number))
 
     SHOW_ID = str(40581)
     response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords, show_id=SHOW_ID)
     # archive episode id in text file for next step
     episode_id = response["data"]["id"]
-    episode_id_path = "podcast/episode_id{}.txt".format(podcast_number)
+    episode_id_path = "podcasts/podcast{}/episode_id.txt".format(podcast_number)
     with open(episode_id_path, "w") as f:
         f.write(episode_id)
     print("Episode draft created in transistor.fm")
@@ -62,15 +62,16 @@ def create_podcast_draft(podcast_number):
 # archive all podcast files, final step
 def archive_podcast_files(episode_number):
     # put every file from podcast folder in a zip file and into archive folder
-    zip_path = "archive/podcast{}.zip".format(episode_number)
-    zip_and_delete_files("podcast", zip_path)
+    zip_path = "podcasts/podcast{}/archive.zip".format(episode_number)
+    zip_and_delete_files("podcasts/podcast{}/".format(episode_number), zip_path)
+    #TODO: don't run if azure
     print("Podcast files archived in archive folder: {}".format(zip_path))
     return
 
 # publish episode on transistor.fm
 def publish_episode(episode_number):
     # get episode id from text file
-    episode_id_path = "podcast/episode_id{}.txt".format(episode_number)
+    episode_id_path = "podcasts/podcast{}/episode_id.txt".format(episode_number)
     with open(episode_id_path, "r") as f:
         episode_id = f.read()
     response = publish_episode_transitor(episode_id=episode_id)
@@ -80,10 +81,10 @@ def publish_episode(episode_number):
 # generate podcast title, description and keywords
 def generate_metadata(episode_number):
     # get script from file
-    script = import_string_from_file("podcast/script{}.txt".format(episode_number))
+    script = import_string_from_file("podcasts/podcast{}/script.txt".format(episode_number))
 
     # get headlines from file
-    headlines = import_json_from_file("podcast/headlines{}.json".format(episode_number))
+    headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(episode_number))
 
     podcast_title = create_podcast_title(episode_number, script)
     podcast_description = create_podcast_description(episode_number, script, headlines)
@@ -91,9 +92,9 @@ def generate_metadata(episode_number):
 
 
     # write title and description and keywords to files
-    title_path = "podcast/title{}.txt".format(episode_number)
-    description_path = "podcast/description{}.txt".format(episode_number)
-    keywords_path = "podcast/keywords{}.txt".format(episode_number)
+    title_path = "podcasts/podcast{}/title.txt".format(episode_number)
+    description_path = "podcasts/podcast{}/description.txt".format(episode_number)
+    keywords_path = "podcasts/podcast{}/keywords.txt".format(episode_number)
 
     export_string_to_file(podcast_title, title_path)
     export_string_to_file(podcast_description, description_path)
@@ -115,7 +116,7 @@ def main(episode_number, step, days=1, file_env="OS"):
         create_podcast_script(episode_number)
     elif step == 3:
         # create the audio files from the podcast script file, and generate metadata(description, title, keywords)
-        create_podcast_audio(episode_number, file_path="podcast")
+        create_podcast_audio(episode_number)
         generate_metadata(episode_number)
     elif step == 4:
         # create the podcast draft on transistor.fm
