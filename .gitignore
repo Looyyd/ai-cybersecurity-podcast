@@ -1,10 +1,12 @@
 .env
 .DS_Store
 libs/__pycache__/
+__pycache__/
 
 secrets/
 
 archive/
 
 podcast/
+podcasts/
 .venv/

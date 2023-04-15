@@ -14,12 +14,12 @@ def create_headlines_file(podcast_number, n_headlines=4, days=1, file_env="OS"):
     file_path="podcasts/podcast{}/headlines.json".format(podcast_number)
     
     # TODO: better error handling
+    #try export print error if fails
     try:
         export_json_to_file(selected_headlines, file_path, file_env=file_env)
-    except Exception:
-        print("Failed to create headlines file")
-        print(Exception)
-        exit(1)
+    except Exception as e:
+        print("Error: ", e)
+        return
     print("Headlines file created at {}".format(file_path))
     # TODO: return something useful?
 
@@ -45,9 +45,9 @@ def create_podcast_draft(podcast_number, file_env="OS"):
     file_path="podcasts/podcast{}/audio.mp3".format(podcast_number)
 
     # get title and description from files
-    title = import_string_from_file("podcasts/podcast{}/title.txt".format(podcast_number), file_environment=file_env)
-    description = import_string_from_file("podcasts/podcast{}/description.txt".format(podcast_number), file_environment=file_env)
-    keywords = import_string_from_file("podcasts/podcast{}/keywords.txt".format(podcast_number), file_environment=file_env)
+    title = import_string_from_file("podcasts/podcast{}/title.txt".format(podcast_number), file_env=file_env)
+    description = import_string_from_file("podcasts/podcast{}/description.txt".format(podcast_number), file_env=file_env)
+    keywords = import_string_from_file("podcasts/podcast{}/keywords.txt".format(podcast_number), file_env=file_env)
 
     SHOW_ID = str(40581)
     response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords, show_id=SHOW_ID)
@@ -63,7 +63,7 @@ def create_podcast_draft(podcast_number, file_env="OS"):
 def archive_podcast_files(episode_number, file_env="OS"):
     # put every file from podcast folder in a zip file and into archive folder
     zip_path = "podcasts/podcast{}/archive.zip".format(episode_number)
-    zip_and_delete_files("podcasts/podcast{}/".format(episode_number), zip_path, file_environment=file_env)
+    zip_and_delete_files("podcasts/podcast{}/".format(episode_number), zip_path, file_env=file_env)
     print("Podcast files archived in archive folder: {}".format(zip_path))
     return
 
@@ -71,7 +71,7 @@ def archive_podcast_files(episode_number, file_env="OS"):
 def publish_episode(episode_number, file_env="OS"):
     # get episode id from text file
     episode_id_path = "podcasts/podcast{}/episode_id.txt".format(episode_number)
-    episode_id = import_string_from_file(episode_id_path, file_environment=file_env)
+    episode_id = import_string_from_file(episode_id_path, file_env=file_env)
 
     response = publish_episode_transitor(episode_id=episode_id)
     print("Episode published on Transistor")
@@ -80,14 +80,14 @@ def publish_episode(episode_number, file_env="OS"):
 # generate podcast title, description and keywords
 def generate_metadata(episode_number, file_env="OS"):
     # get script from file
-    script = import_string_from_file("podcasts/podcast{}/script.txt".format(episode_number), file_environment=file_env)
+    script = import_string_from_file("podcasts/podcast{}/script.txt".format(episode_number), file_env=file_env)
 
     # get headlines from file
-    headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(episode_number), file_environment=file_env)
+    headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(episode_number), file_env=file_env)
 
-    podcast_title = create_podcast_title(episode_number, script, file_env=file_env)
-    podcast_description = create_podcast_description(episode_number, script, headlines, file_env=file_env)
-    podcast_keywords = create_podcast_keywords(episode_number, script, file_env=file_env)
+    podcast_title = create_podcast_title(episode_number, script)
+    podcast_description = create_podcast_description(episode_number, script, headlines)
+    podcast_keywords = create_podcast_keywords(episode_number, script)
 
 
     # write title and description and keywords to files
@@ -95,9 +95,9 @@ def generate_metadata(episode_number, file_env="OS"):
     description_path = "podcasts/podcast{}/description.txt".format(episode_number)
     keywords_path = "podcasts/podcast{}/keywords.txt".format(episode_number)
 
-    export_string_to_file(podcast_title, title_path, file_environment=file_env)
-    export_string_to_file(podcast_description, description_path, file_environment=file_env)
-    export_string_to_file(podcast_keywords, keywords_path, file_environment=file_env)
+    export_string_to_file(podcast_title, title_path, file_env=file_env)
+    export_string_to_file(podcast_description, description_path, file_env=file_env)
+    export_string_to_file(podcast_keywords, keywords_path, file_env=file_env)
 
     print("Wrote title, description and keywords to files: {} , {} and {}".format(title_path, description_path, keywords_path))
     return podcast_title, podcast_description

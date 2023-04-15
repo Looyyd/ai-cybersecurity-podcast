@@ -3,7 +3,6 @@ import os
 import re
 import shutil
 from libs.file_manipulation import *
-from pydub import AudioSegment
 
 # CONSTANTS
 elevenLabsKey = os.getenv("ELEVENLABS_API_KEY")
@@ -67,36 +66,12 @@ def tts(text, person="John"):
     response = requests.post(api, headers={"xi-api-key": elevenLabsKey}, json=request_body)
     return response
 
-def concatenate_audio_files(input_folder, output_file):
-    audio_files = sorted(os.listdir(input_folder), key=lambda x: int(x.split('.')[0]))
 
-    combined_audio = AudioSegment.empty()
 
-    for audio_file in audio_files:
-        audio_path = os.path.join(input_folder, audio_file)
-        audio = AudioSegment.from_mp3(audio_path)
-        combined_audio += audio
-
-    combined_audio.export(output_file, format="mp3")
-
-# archives the used audio files
-def move_audio_files(input_folder, output_folder):
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    audio_files = sorted(os.listdir(input_folder), key=lambda x: int(x.split('.')[0]))
-
-    for audio_file in audio_files:
-        input_path = os.path.join(input_folder, audio_file)
-        output_path = os.path.join(output_folder, audio_file)
-
-        if os.path.isfile(input_path):
-            shutil.move(input_path, output_path)
 
 # function that takes audio lines and makes them into the podcast audio
-def audio_files_to_podcast(podcast_number, file_path_audio_input, file_path_output):
-    output_file = "{}/podcast{}.mp3".format(file_path_output, podcast_number)
-    concatenate_audio_files(file_path_audio_input, output_file)
+def audio_files_to_podcast(podcast_number, file_path_audio_input, file_path_output, file_env="OS"):
+    concatenate_audio_files(file_path_audio_input, file_path_output, file_env=file_env)
 
 
 # function that gets the list of available voices from the api
@@ -127,18 +102,23 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path, file_env="OS"):
         else:
             # request the api for each person
             response = tts(line["dialogue"], line["person"])
-            assert response.headers["Content-Type"] == "audio/mpeg"
+            # if content type is not audio/mpeg, raise error
+            if response.headers["Content-Type"] != "audio/mpeg":
+                print(response.json())
+                raise ValueError("Content type is not audio/mpeg")
             #with open(audio_path, "wb") as file:
                 #file.write(response.content)
             # TODO: does this work with audio?
-            export_string_to_file(response.content, audio_path, file_env=file_env)
+            export_bytes_to_file(response.content, audio_path, file_env=file_env)
 
 # function that takes the gpt4 dialogue output and makes it into the podcast audio
-def podcast_script_to_audio(script, podcast_number, file_path="podcasts", file_env="OS"):
+def podcast_script_to_audio(script, podcast_number, file_env="OS"):
     #parse dialogue into array of json objects
     parsed_dialogue = parse_dialogue(script)
+    file_path_parts="podcasts/podcast{}/audio".format(podcast_number)
+    file_path_final="podcasts/podcast{}/audio.mp3".format(podcast_number)
     # make the audio files using eleven labs api
-    parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path+"/podcast{}/audio".format(podcast_number), file_env=file_env)
+    parsed_dialogue_to_audio_files(parsed_dialogue, file_path=file_path_parts, file_env=file_env)
     # make the podcast by joining audio files together
-    audio_files_to_podcast(podcast_number, file_path+"/audio", file_path)
+    audio_files_to_podcast(podcast_number, file_path_parts, file_path_final, file_env=file_env)
 
