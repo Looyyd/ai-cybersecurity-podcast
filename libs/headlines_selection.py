@@ -114,11 +114,11 @@ def validate_headlines_selection_output(output):
                 # headline string is in json format, change string to json
                 selected_headlines.append(json.loads(line))
     except json.decoder.JSONDecodeError:
-        validation_string += "FAIL. Output is not valid json. "
+        validation_string += "FAIL. Output is not lines of valid json. "
         return False, validation_string
 
     # passed json validation
-    validation_string += "PASS. Output is valid json. "
+    validation_string += "PASS. Output is lines of valid json. "
 
     # passed all checks
     return True, validation_string

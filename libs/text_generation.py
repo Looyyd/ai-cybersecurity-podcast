@@ -93,6 +93,12 @@ def create_headlines_to_podcast_prompt(selected_headlines, podcast_number):
         for link_index, link in enumerate(headline["links"]):
             article_text = extract_text_from_url(link)
             summarized_article_text = summarize_article_gpt35(article_text)
+
+            # write summary to file
+            create_directory_if_not_exists("podcast/summaries")
+            with open("podcast/summaries/summary{}_{}_{}.txt".format(podcast_number,headline_index+1, link_index+1), "w") as f:
+                f.write(summarized_article_text)
+
             articles_string += "Link " + str(link_index+1) + ": " + link + "\n"
             #articles_string += "Content of link:\n\"\"\"\n" + article_text + "\n\"\"\"\n"
             articles_string += "Summary of link content:\n\"\"\"\n" + summarized_article_text + "\n\"\"\"\n"
