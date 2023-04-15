@@ -1,0 +1,10 @@
+FROM python:3.11
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "your_script.py", "--episode_number", "420", "--step", "1"]

@@ -1,7 +1,6 @@
 from libs.text_generation import *
 from libs.headlines_selection import *
 from libs.tts import *
-from libs.audio_to_video import *
 from libs.upload_podcast import *
 from libs.file_manipulation import *
 import json
@@ -127,6 +126,7 @@ if __name__ == "__main__":
     parser.add_argument("--episode_number", type=int, required=True, help="Episode number.")
     parser.add_argument("--step", type=int, required=True, help="Step number.")
     parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1)", default=1)
+    # TODO: add file environment variable
 
     args = parser.parse_args()
 

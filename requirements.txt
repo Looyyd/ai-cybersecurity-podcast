@@ -1,0 +1,11 @@
+openai
+argparse
+datetime
+feedparser
+newspaper3k
+requests
+pydub
+azure-storage-blob
+azure-identity
+moviepy
+
