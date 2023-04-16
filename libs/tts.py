@@ -90,13 +90,13 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path, file_env="OS"):
     create_directory_if_not_exists(file_path, file_env=file_env)
     for line in parsed_dialogue:
         i = i+1
-        audio_path = "{}/{}.mp3".format(file_path, i)
+        audio_path = "{}/{:03d}.mp3".format(file_path, i)
         # if person is sound effect, add sound effect from assets folder
         if line["person"] == "#transition":
-            shutil.copy("assets/transition.mp3", audio_path)
+            copy_file("assets/transition.mp3", audio_path, file_env=file_env)
             continue
         elif line["person"] == "#jingle":
-            shutil.copy("assets/jingle.mp3", audio_path)
+            copy_file("assets/jingle.mp3", audio_path, file_env=file_env)
             continue
         #if line is not sound effect, request the api for the audio
         else:

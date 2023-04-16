@@ -1,6 +1,7 @@
 import json
 import os
 import zipfile
+import shutil
 from io import BytesIO
 from azure.storage.blob import BlobClient, BlobServiceClient
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -8,14 +9,14 @@ from azure.identity import DefaultAzureCredential
 from pydub import AudioSegment
 
 
-def get_blob_client(container_name, blob_name):
-    connection_string = os.environ["AZURE_CONNECTION_STRING"]
-    blob_client = BlobClient.from_connection_string(connection_string, container_name, blob_name)
+def get_blob_client(container_name, blob_name, account_name="cybersecaidailystorage"):
+    account_url = f"https://{account_name}.blob.core.windows.net"
+    credential = DefaultAzureCredential()
+
+    blob_client = BlobClient(account_url=account_url, container_name=container_name, blob_name=blob_name, credential=credential)
     return blob_client
 
-# TODO: fix/setup authentication
-def get_blob_service_client():
-    account_name = "<your_storage_account_name>"
+def get_blob_service_client(account_name="cybersecaidailystorage"):
     account_url = f"https://{account_name}.blob.core.windows.net"
     credential = DefaultAzureCredential()
     
@@ -139,6 +140,19 @@ def create_blob_if_not_exists(container_name, blob_name):
         blob_client.upload_blob(b"", overwrite=True)
         print(f"Created blob {blob_name} in container {container_name}.")
 
+def copy_file(source_file_path, destination_file_path, file_env='OS'):
+    if file_env == 'OS':
+        shutil.copyfile(source_file_path, destination_file_path)
+    elif file_env == 'AZURE':
+        # Create the destination blob if it does not exist
+        container_name, blob_name = destination_file_path.split('/', 1)
+        create_blob_if_not_exists(container_name, blob_name)
+        # Copy the source blob to the destination blob
+        source_blob_client = get_blob_client(*source_file_path.split('/', 1))
+        destination_blob_client = get_blob_client(container_name, blob_name)
+        destination_blob_client.start_copy_from_url(source_blob_client.url)
+    else:
+        raise ValueError("Invalid file_env value. Must be 'AZURE' or 'OS'.")
 
 def zip_and_delete_files(folder_path, zip_name, file_env='OS'):
     if file_env == 'OS':
@@ -161,6 +175,8 @@ def zip_and_delete_files(folder_path, zip_name, file_env='OS'):
         raise ValueError("Invalid file_env value. Must be 'AZURE' or 'OS'.")
 
 def concatenate_audio_files(input_folder, output_file, file_env="OS"):
+    #    file_path_parts="podcasts/podcast{}/audio".format(podcast_number)
+    #file_path_final="podcasts/podcast{}/audio.mp3".format(podcast_number)
     if file_env == "OS":
         audio_files = sorted(os.listdir(input_folder), key=lambda x: int(x.split('.')[0]))
 
@@ -172,20 +188,24 @@ def concatenate_audio_files(input_folder, output_file, file_env="OS"):
             combined_audio += audio
 
         combined_audio.export(output_file, format="mp3")
-
     elif file_env == "AZURE":
-
+        # container is first part of input_folder
+        container_name = input_folder.split('/', 1)[0]
+        blob_path = input_folder.split('/', 1)[1]
         blob_service_client = get_blob_service_client()
-        input_container = blob_service_client.get_container_client(input_folder)
+        input_container = blob_service_client.get_container_client(container_name)
 
         combined_audio = AudioSegment.empty()
 
-        for blob in input_container.list_blobs():
+        for blob in input_container.list_blobs(blob_path):
+            print(blob.name)
             blob_client = input_container.get_blob_client(blob)
             blob_data = blob_client.download_blob()
 
-            with BytesIO(blob_data.readall()) as blob_stream:
-                audio = AudioSegment.from_mp3(blob_stream)
+            with BytesIO(blob_data.read()) as blob_stream:
+                # get audio segment from blob stream
+                audio =  AudioSegment.from_file(blob_stream)
+                #audio = AudioSegment.from_mp3(blob_stream)
                 combined_audio += audio
 
         output_container_name, output_blob_name = output_file.split('/', 1)

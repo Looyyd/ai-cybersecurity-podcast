@@ -25,7 +25,7 @@ def create_headlines_file(podcast_number, n_headlines=4, days=1, file_env="OS"):
 
 # create the podcast script from the headlines file
 def create_podcast_script(podcast_number, file_env="OS"):
-    selected_headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(podcast_number))
+    selected_headlines = import_json_from_file("podcasts/podcast{}/headlines.json".format(podcast_number), file_env=file_env)
     podcast_script = headlines_to_podcast_script_gpt4(selected_headlines, podcast_number)
     
     file_path="podcasts/podcast{}/script.txt".format(podcast_number)
@@ -34,11 +34,11 @@ def create_podcast_script(podcast_number, file_env="OS"):
 
 # create the audio files from the podcast script file
 def create_podcast_audio(podcast_number, file_path="podcasts", file_env="OS"):
-    podcast_script = import_string_from_file("{}/podcast{}/script.txt".format(file_path, podcast_number))
-    parsed_dialogue = parse_dialogue(podcast_script)
+    podcast_script = import_string_from_file("{}/podcast{}/script.txt".format(file_path, podcast_number), file_env=file_env)
+    #parsed_dialogue = parse_dialogue(podcast_script)
     # TODO: add path to audio files
-    podcast_script_to_audio(podcast_script, podcast_number, file_path=file_path, file_env=file_env)
-    print("Audio files created in {}/podcast{}/script.txt".format(file_path, podcast_number))
+    podcast_script_to_audio(podcast_script, podcast_number,file_env=file_env)
+    print("Audio files created in {}/podcast{}/audio.mp3".format(file_path, podcast_number))
 
 # create a podcast draft on transistor.fm using the audio files and metadata
 def create_podcast_draft(podcast_number, file_env="OS"):
@@ -50,7 +50,7 @@ def create_podcast_draft(podcast_number, file_env="OS"):
     keywords = import_string_from_file("podcasts/podcast{}/keywords.txt".format(podcast_number), file_env=file_env)
 
     SHOW_ID = str(40581)
-    response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords, show_id=SHOW_ID)
+    response = audio_file_to_podcast(file_path, title, description, podcast_number=podcast_number, keywords=keywords, show_id=SHOW_ID, file_env=file_env)
     # archive episode id in text file for next step
     episode_id = response["data"]["id"]
     episode_id_path = "podcasts/podcast{}/episode_id.txt".format(podcast_number)

@@ -18,9 +18,9 @@ def authorize_upload(filename):
     return response
 
 # upload audio to the url returned by authorize_upload
-def upload_audio(upload_url, file_path):
+def upload_audio(upload_url, file_path, file_env="OS"):
     headers = {"Content-Type": "audio/mpeg"}
-    data = import_bytes_from_file(file_path)
+    data = import_bytes_from_file(file_path, file_env=file_env)
     #TODO: test file manipulation
     response = requests.put(upload_url, headers=headers, data=data)
 
@@ -68,7 +68,7 @@ def audio_file_to_podcast(path_to_audio, title, description, podcast_number, key
     upload_url = json_response['data']['attributes']['upload_url']
     audio_url = json_response['data']['attributes']['audio_url']
 
-    response = upload_audio(upload_url, path_to_audio)
+    response = upload_audio(upload_url, path_to_audio, file_env=file_env)
 
     response = create_episode(show_id, title, description, audio_url, number=podcast_number, keywords=keywords)
     episode_id = response["data"]["id"]
