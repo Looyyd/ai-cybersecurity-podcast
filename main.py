@@ -74,7 +74,12 @@ def publish_episode(episode_number, file_env="OS"):
     episode_id = import_string_from_file(episode_id_path, file_env=file_env)
 
     response = publish_episode_transitor(episode_id=episode_id)
-    print("Episode published on Transistor")
+    # increment episode number in text file
+    last_episode_n = import_string_from_file("podcasts/last_episode_n.txt", file_env=file_env)
+    last_episode_n = int(last_episode_n) + 1 
+    export_string_to_file(str(last_episode_n), "podcasts/last_episode_n.txt", file_env=file_env)
+
+    print("Episode published on Transistor, last episode number: {}".format(last_episode_n))
     return response
 
 # generate podcast title, description and keywords
@@ -106,10 +111,11 @@ def generate_metadata(episode_number, file_env="OS"):
 def main(episode_number, step, days=1, file_env="OS"):
     print(f"Episode number: {episode_number}")
     print(f"Step: {step}")
+    n_headlines = 4
 
     if step == 1:
         # select headlines and put them in a file
-        create_headlines_file(episode_number, n_headlines=4, days=days, file_env=file_env)
+        create_headlines_file(episode_number, n_headlines=n_headlines, days=days, file_env=file_env)
     elif step == 2:
         # create the podcast script from the headlines file
         create_podcast_script(episode_number, file_env=file_env)
@@ -125,17 +131,37 @@ def main(episode_number, step, days=1, file_env="OS"):
         response = publish_episode(episode_number, file_env=file_env)
         #TODO: archives every file not just the one from the episode number
         archive_podcast_files(episode_number=episode_number, file_env=file_env)
+    elif step==-1:
+        # run all steps
+        create_headlines_file(episode_number, n_headlines=n_headlines, days=days, file_env=file_env)
+        create_podcast_script(episode_number, file_env=file_env)
+        create_podcast_audio(episode_number, file_env=file_env)
+        generate_metadata(episode_number, file_env=file_env)
+        create_podcast_draft(episode_number, file_env=file_env)
+        response = publish_episode(episode_number, file_env=file_env)
+        archive_podcast_files(episode_number=episode_number, file_env=file_env)
     else :
         print("Invalid step number.")
         exit()
 
 if __name__ == "__main__":
+    # default days is 3 if monday, 1 if other day
+    if datetime.datetime.today().weekday() == 0:
+        days = 3
+    else:
+        days = 1
     parser = argparse.ArgumentParser(description="Process command line arguments.")
-    parser.add_argument("--episode_number", type=int, required=True, help="Episode number.")
-    parser.add_argument("--step", type=int, required=True, help="Step number.")
-    parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1)", default=1)
+    parser.add_argument("--episode_number", type=int, required=False, help="Episode number.", default=-1)
+    parser.add_argument("--step", type=int, required=False, help="Step number.", default=-1)
+    parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1,except 3 on mondays)", default=days)
     parser.add_argument("--file_env", type=str, required=False, help="File environment variable. (default: OS, can be OS or AZURE)", default="OS")
 
     args = parser.parse_args()
+
+    # get last published episode number from file podcasts/last_episode.txt
+    #if episode number is not specified, use last episode number + 1
+    if args.episode_number == -1:
+        last_episode = import_string_from_file("podcasts/last_episode_n.txt", file_env="OS")
+        args.episode_number = int(last_episode) + 1
 
     main(args.episode_number, args.step, days=args.days, file_env=args.file_env)
