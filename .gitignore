@@ -10,3 +10,5 @@ archive/
 podcast/
 podcasts/
 .venv/
+
+last_podcast_n.txt

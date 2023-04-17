@@ -3,6 +3,7 @@ from libs.headlines_selection import *
 from libs.tts import *
 from libs.upload_podcast import *
 from libs.file_manipulation import *
+import datetime
 import json
 import argparse
 
@@ -138,8 +139,9 @@ def main(episode_number, step, days=1, file_env="OS"):
         create_podcast_audio(episode_number, file_env=file_env)
         generate_metadata(episode_number, file_env=file_env)
         create_podcast_draft(episode_number, file_env=file_env)
-        response = publish_episode(episode_number, file_env=file_env)
-        archive_podcast_files(episode_number=episode_number, file_env=file_env)
+        # TODO: publish episode, if tests work
+        #response = publish_episode(episode_number, file_env=file_env)
+        #archive_podcast_files(episode_number=episode_number, file_env=file_env)
     else :
         print("Invalid step number.")
         exit()
@@ -161,7 +163,7 @@ if __name__ == "__main__":
     # get last published episode number from file podcasts/last_episode.txt
     #if episode number is not specified, use last episode number + 1
     if args.episode_number == -1:
-        last_episode = import_string_from_file("podcasts/last_episode_n.txt", file_env="OS")
+        last_episode = import_string_from_file("podcasts/last_episode_n.txt", file_env=args.file_env)
         args.episode_number = int(last_episode) + 1
 
     main(args.episode_number, args.step, days=args.days, file_env=args.file_env)

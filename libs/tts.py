@@ -101,11 +101,16 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path, file_env="OS"):
         #if line is not sound effect, request the api for the audio
         else:
             # request the api for each person
-            response = tts(line["dialogue"], line["person"])
-            # if content type is not audio/mpeg, raise error
-            if response.headers["Content-Type"] != "audio/mpeg":
-                print(response.json())
-                raise ValueError("Content type is not audio/mpeg")
+            for attempt in range(3):
+                response = tts(line["dialogue"], line["person"])
+                # if content type is not audio/mpeg, raise error
+                if response.headers["Content-Type"] != "audio/mpeg":
+                    # if something went wrong,  try again
+                    if attempt < 2:
+                        continue
+                    else:
+                        print(response.json())
+                        raise ValueError("Content type is not audio/mpeg")
             #with open(audio_path, "wb") as file:
                 #file.write(response.content)
             # TODO: does this work with audio?
