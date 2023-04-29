@@ -8,4 +8,4 @@ The podcast is available on the following platforms:
 
 # Technologies used
 GPT-4: For content generation
-ElevenLavs: For text-to-speech conversion
+ElevenLabs: For text-to-speech conversion
