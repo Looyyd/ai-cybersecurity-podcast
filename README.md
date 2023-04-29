@@ -1,4 +1,4 @@
-# What is this
+# Fully Automated AI-Generated Cybersecurity Podcast
 This project aims to publish daily cybersecurity news to various platforms using a fully automated AI-generated podcast. It was created for fun and to learn how to use different AI APIs, such as GPT-4 for content generation and ElevenLavs for text-to-speech conversion.
 
 # Platforms
