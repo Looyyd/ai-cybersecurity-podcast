@@ -109,11 +109,18 @@ def generate_metadata(episode_number, file_env="OS"):
     return podcast_title, podcast_description
 
 
-def main(episode_number, step, days=1, file_env="OS"):
+def main(episode_number, step, days=1, file_env="OS", debug=False):
     print(f"Episode number: {episode_number}")
     print(f"Step: {step}")
     n_headlines = 4
 
+    if debug:
+        # run 4 steps
+        create_headlines_file(episode_number, n_headlines=n_headlines, days=days, file_env=file_env)
+        create_podcast_script(episode_number, file_env=file_env)
+        create_podcast_audio(episode_number, file_env=file_env)
+        generate_metadata(episode_number, file_env=file_env)
+        create_podcast_draft(episode_number, file_env=file_env)
     if step == 1:
         # select headlines and put them in a file
         create_headlines_file(episode_number, n_headlines=n_headlines, days=days, file_env=file_env)
@@ -157,6 +164,8 @@ if __name__ == "__main__":
     parser.add_argument("--step", type=int, required=False, help="Step number.", default=-1)
     parser.add_argument("--days", type=int, required=False, help="Number of days to look back for headlines. (default: 1,except 3 on mondays)", default=days)
     parser.add_argument("--file_env", type=str, required=False, help="File environment variable. (default: OS, can be OS or AZURE)", default="OS")
+    parser.add_argument('--debug', action='store_true', default=False, help='Enable debug mode, this will run all steps but not publish the episode.')
+
 
     args = parser.parse_args()
 
@@ -166,4 +175,4 @@ if __name__ == "__main__":
         last_episode = import_string_from_file("podcasts/last_episode_n.txt", file_env=args.file_env)
         args.episode_number = int(last_episode) + 1
 
-    main(args.episode_number, args.step, days=args.days, file_env=args.file_env)
+    main(args.episode_number, args.step, days=args.days, file_env=args.file_env, debug=args.debug)
