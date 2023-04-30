@@ -154,10 +154,9 @@ def headlines_to_podcast_script_gpt4(selected_headlines, podcast_number):
     n_headlines = len(selected_headlines)
     # generate podcast script
     # TODO: trying self healing gpt4
-    podcast_script, error = gpt_complete_until_format(
+    podcast_script, _ = gpt_complete_until_format(
         full_prompt, higher_order_validate_podcast(n_headlines=n_headlines), debug=True
     )
-    # podcast_script = gpt4_complete(full_prompt)
     return podcast_script
 
 
