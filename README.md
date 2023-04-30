@@ -10,3 +10,7 @@ The podcast is available on the following platforms:
 GPT-4: For content generation
 
 ElevenLabs: For text-to-speech conversion
+
+Transistor.fm: For podcast hosting
+
+Azure: For automated container runs with Container Instances and Logic Apps as well as file hosting with Azure Storage.
