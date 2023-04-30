@@ -10,5 +10,6 @@ archive/
 podcast/
 podcasts/
 .venv/
+.vscode/
 
 last_podcast_n.txt

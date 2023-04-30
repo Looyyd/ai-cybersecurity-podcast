@@ -1,10 +1,8 @@
 import feedparser
-import openai
-import os
 import json
 import random
 from datetime import datetime, timedelta, timezone
-from libs.gpt import gpt35_complete, gpt4_complete, gpt_complete_until_format
+from libs.gpt import gpt_complete_until_format
 
 
 
@@ -125,5 +123,5 @@ def validate_headlines_selection_output(output):
 
 if __name__ == "__main__":
     # Example usage
-    selected_headlines = select_headlines(5, 1)
-    print(selected_headlines)
+    headlines = select_headlines(5, 1)
+    print(headlines)
