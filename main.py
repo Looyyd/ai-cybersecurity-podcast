@@ -134,8 +134,7 @@ def main(episode_number, step, days=1, file_env="OS", debug=False):
     elif step == 5:
         # publish episode on transistor.fm
         publish_episode(episode_number, file_env=file_env)
-        #TODO: archives every file not just the one from the episode number
-        archive_podcast_files(episode_number=episode_number, file_env=file_env)
+        #archive_podcast_files(episode_number=episode_number, file_env=file_env)
     elif step==-1:
         # run all steps
         create_headlines_file(episode_number, n_headlines=n_headlines, days=days, file_env=file_env)
@@ -143,8 +142,7 @@ def main(episode_number, step, days=1, file_env="OS", debug=False):
         create_podcast_audio(episode_number, file_env=file_env)
         generate_metadata(episode_number, file_env=file_env)
         create_podcast_draft(episode_number, file_env=file_env)
-        # TODO: publish episode, if tests work
-        #response = publish_episode(episode_number, file_env=file_env)
+        publish_episode(episode_number, file_env=file_env)
         #archive_podcast_files(episode_number=episode_number, file_env=file_env)
     else :
         print("Invalid step number.")
