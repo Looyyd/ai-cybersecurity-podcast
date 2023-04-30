@@ -76,7 +76,6 @@ def select_headlines(n_headline, days):
 
 
     # Base prompt
-    # TODO: put prompt into a seperate function
     prompt="You will be given headlines of cybersecurity news articles from different sources(the sources will be given before each headline list).\
             Determine what were the"+ str(n_headline) + " most interesting news stories out of these headlines.\
             For each story, add links to the relevant articles, but don't add more than "+ str(max_links) + " links per story.\
@@ -87,9 +86,7 @@ def select_headlines(n_headline, days):
             + "\n{} biggest stories:".format(n_headline)
     #print(prompt)
 
-    # TODO: test with validation
-    response, error = gpt_complete_until_format(prompt, validate_headlines_selection_output)
-    #response = gpt4_complete(prompt)
+    response, _ = gpt_complete_until_format(prompt, validate_headlines_selection_output)
 
     response_text = response
 
