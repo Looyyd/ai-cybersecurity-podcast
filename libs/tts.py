@@ -111,6 +111,9 @@ def parsed_dialogue_to_audio_files(parsed_dialogue, file_path, file_env="OS"):
                     else:
                         print(response.json())
                         raise ValueError("Content type is not audio/mpeg")
+                else:
+                    # if everything went well, break
+                    break
             #with open(audio_path, "wb") as file:
                 #file.write(response.content)
             # TODO: does this work with audio?
