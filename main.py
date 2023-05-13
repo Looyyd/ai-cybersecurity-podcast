@@ -152,6 +152,11 @@ if __name__ == "__main__":
     # default days is 3 if monday, 1 if other day
     if datetime.datetime.today().weekday() == 0:
         days = 3
+    # skip weekends
+    elif datetime.datetime.today().weekday() == 5:
+        exit()
+    elif datetime.datetime.today().weekday() == 6:
+        exit()
     else:
         days = 1
     parser = argparse.ArgumentParser(description="Process command line arguments.")
