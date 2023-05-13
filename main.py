@@ -152,13 +152,12 @@ if __name__ == "__main__":
     # default days is 3 if monday, 1 if other day
     if datetime.datetime.today().weekday() == 0:
         days = 3
-    # skip weekends
-    elif datetime.datetime.today().weekday() == 5:
-        exit()
-    elif datetime.datetime.today().weekday() == 6:
-        exit()
+    # run on wednesday and friday with 2 days
+    elif datetime.datetime.today().weekday() in [2,4]:
+        days = 2
+    # skip everythin else
     else:
-        days = 1
+        days = exit()
     parser = argparse.ArgumentParser(description="Process command line arguments.")
     parser.add_argument("--episode_number", type=int, required=False, help="Episode number.", default=-1)
     parser.add_argument("--step", type=int, required=False, help="Step number.", default=-1)
